@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TrustLink - AI-Powered Phishing Detection">
+    <title>TrustLink - Advanced AI Phishing Scanner</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chatbot Widget -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    
+    <style>
+        /* ================================================
+           VKZ STUDIO PREMIUM LANDING PAGE
+           Ultra-minimalist dark mode with cinematic lighting
+           ================================================ */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* The Void - Deep Obsidian Backgrounds */
+            --void-black: #050505;
+            --void-charcoal: #0a0a0f;
+            --void-navy: #0d0d14;
+            --void-surface: #111118;
+            
+            /* Neon Accents */
+            --neon-blue: #00d9ff;
+            --electric-blue: #0ea5e9;
+            --soft-violet: #9333ea;
+            --neon-cyan: #06b6d4;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: 24px;
+            
+            /* Typography */
+            --font-display: 'Satoshi', 'Inter', -apple-system, system-ui, sans-serif;
+            --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: var(--void-black);
+            color: rgba(255, 255, 255, 0.95);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* 3D Neural Network Background */
+        .neural-network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, var(--void-charcoal) 0%, var(--void-black) 100%);
+        }
+        
+        .neural-network-bg canvas {
+            width: 100%;
+            height: 100%;
+            opacity: 0.6;
+        }
+        
+        /* Grain Texture Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Cinematic Lighting - Gradient Orbs */
+        .light-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .light-orb-1 {
+            top: -10%;
+            right: 10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--neon-blue), transparent);
+            animation: float-orb 20s ease-in-out infinite;
+        }
+        
+        .light-orb-2 {
+            bottom: -10%;
+            left: 10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--soft-violet), transparent);
+            animation: float-orb 15s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float-orb {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+        }
+        
+        /* Main Container */
+        .landing-container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        /* Header Navigation */
+        .premium-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10002;
+            padding: 1.5rem 3rem;
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        /* Mobile Menu Toggle Button */
+        .mobile-menu-toggle-premium {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 10003;
+            position: relative;
+        }
+        
+        .logo-premium {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo-premium .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s;
+        }
+        
+        .logo-premium:hover .logo-text {
+            filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6));
+            transform: scale(1.05);
+        }
+        
+        .nav-premium {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-premium a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.3s;
+        }
+        
+        .nav-premium a:hover {
+            color: var(--neon-blue);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+            margin-top: 8rem;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            margin-bottom: 3rem;
+            animation: fade-in-up 0.8s ease-out;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7);
+            }
+            50% {
+                opacity: 0.6;
+                box-shadow: 0 0 0 6px rgba(0, 217, 255, 0);
+            }
+        }
+        
+        /* Hero Title - Ultra Wide Letter Spacing */
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            margin-bottom: 2rem;
+            animation: fade-in-up 0.8s ease-out 0.2s both;
+        }
+        
+        .hero-title .gradient-word {
+            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--soft-violet) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-title .outline-word {
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Hero Subtitle - Tight Tracking */
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            line-height: 1.7;
+            letter-spacing: -0.01em;
+            font-weight: 400;
+            animation: fade-in-up 0.8s ease-out 0.4s both;
+        }
+        
+        /* Centerpiece - Frosted Glass Search Bar */
+        .search-centerpiece {
+            max-width: 800px;
+            margin: 0 auto 6rem;
+            position: relative;
+            animation: fade-in-up 0.8s ease-out 0.6s both;
+        }
+        
+        .glass-search-container {
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 0.75rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 0 1px rgba(0, 217, 255, 0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-search-container:hover {
+            border-color: rgba(0, 217, 255, 0.3);
+            box-shadow: 
+                0 12px 48px rgba(0, 217, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 0 0 1px rgba(0, 217, 255, 0.2);
+        }
+        
+        .glass-search-container:focus-within {
+            border-color: rgba(0, 217, 255, 0.5);
+            box-shadow: 
+                0 16px 64px rgba(0, 217, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 0 4px rgba(0, 217, 255, 0.1);
+        }
+        
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-icon {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .glass-search-container:focus-within .search-icon {
+            color: var(--neon-blue);
+            filter: drop-shadow(0 0 8px var(--neon-blue));
+        }
+        
+        .premium-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.125rem;
+            font-family: var(--font-body);
+            padding: 1.25rem 1rem;
+            letter-spacing: -0.01em;
+            font-weight: 400;
+        }
+        
+        .premium-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+        
+        /* Neon Glow Scan Button */
+        .scan-btn-premium {
+            position: relative;
+            padding: 1.25rem 3rem;
+            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--electric-blue) 100%);
+            border: none;
+            border-radius: 14px;
+            color: var(--void-black);
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 4px 20px rgba(0, 217, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .scan-btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+        
+        .scan-btn-premium:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 40px rgba(0, 217, 255, 0.7),
+                0 0 60px rgba(0, 217, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        .scan-btn-premium:hover::before {
+            left: 100%;
+        }
+        
+        .scan-btn-premium:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 4rem;
+            animation: fade-in-up 0.8s ease-out 0.6s both;
+        }
+        
+        .scan-btn-premium {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .cta-btn-secondary {
+            padding: 1.25rem 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .cta-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fade-in-up 0.8s ease-out 0.8s both;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: rgba(0, 217, 255, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateY(-4px);
+        }
+        
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+        
+        /* Fade In Up Animation */
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .premium-header {
+                padding: 1rem 1.5rem;
+            }
+            
+            /* Show mobile menu toggle */
+            .mobile-menu-toggle-premium {
+                display: block;
+            }
+            
+            /* Hide navigation by default on mobile */
+            .nav-premium {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(5, 5, 5, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem;
+                border-radius: 0 0 12px 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                z-index: 10002;
+                margin-top: 0.5rem;
+                border: 1px solid rgba(0, 217, 255, 0.2);
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            .nav-premium.active {
+                display: flex !important;
+            }
+            
+            .nav-premium a {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                border: 1px solid transparent;
+            }
+            
+            .nav-premium a:hover {
+                background: rgba(0, 217, 255, 0.1);
+                border-color: rgba(0, 217, 255, 0.3);
+            }
+            
+            .hero-section {
+                margin-top: 6rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .scan-btn-premium,
+            .cta-btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D Neural Network Background -->
+    <div class="neural-network-bg">
+        <canvas id="neuralCanvas"></canvas>
+    </div>
+    
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+    
+    <!-- Cinematic Lighting -->
+    <div class="light-orb light-orb-1"></div>
+    <div class="light-orb light-orb-2"></div>
+    
+    <!-- Premium Header -->
+    <header class="premium-header">
+        <div class="header-content">
+            <a href="/" class="logo-premium">
+                <img src="{{ url_for('static', filename='images/img.png') }}" alt="TrustLink Logo" style="height: 45px; width: auto; margin-right: 0.5rem;">
+                <span class="logo-text">TrustLink</span>
+            </a>
+            <button class="mobile-menu-toggle-premium" id="mobileMenuTogglePremium" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-premium" id="mobileNavPremium">
+                <a href="{{ url_for('scanner') }}">Scanner</a>
+                {% if user %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('download_extension') }}">Extension</a>
+                {% endif %}
+                <a href="{{ url_for('about') }}">About</a>
+                {% if user %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Get Started</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Landing Container -->
+    <div class="landing-container">
+        <section class="hero-section">
+            
+            <!-- Status Badge -->
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                AI-Powered Threat Intelligence
+            </div>
+            
+            <!-- Hero Title -->
+            <h1 class="hero-title">
+                Detect <span class="gradient-word">Phishing</span><br>
+                Before It <span class="outline-word">Strikes</span>
+            </h1>
+            
+            <!-- Hero Subtitle -->
+            <p class="hero-subtitle">
+                Advanced neural network analyzes URLs at lightning speed, identifying phishing attempts with 99% accuracy before you click. Protect yourself in real-time.
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div class="cta-buttons">
+                <a href="{{ url_for('scanner') }}" class="scan-btn-premium">
+                    <i class="fas fa-search"></i> Start Scanning
+                </a>
+                {% if not user %}
+                <a href="{{ url_for('register') }}" class="cta-btn-secondary">
+                    <i class="fas fa-user-plus"></i> Get Started Free
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ model_accuracy }}</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">85K+</div>
+                    <div class="stat-label">Training URLs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Protection</div>
+                </div>
+            </div>
+            
+        </section>
+    </div>
+    
+    <!-- Download Extension CTA Section -->
+    <section style="position: relative; z-index: 10; padding: 6rem 2rem; margin-top: 4rem;">
+        <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
+            <div style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: 24px; padding: 4rem 3rem; position: relative; overflow: hidden;">
+                
+                <!-- Glow Effect -->
+                <div style="position: absolute; top: -50%; left: 50%; transform: translateX(-50%); width: 300px; height: 300px; background: radial-gradient(circle, rgba(0, 217, 255, 0.15) 0%, transparent 70%); pointer-events: none;"></div>
+                
+                <!-- Content -->
+                <div style="position: relative; z-index: 1;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 50px; margin-bottom: 2rem;">
+                        <i class="fab fa-chrome" style="color: var(--neon-blue);"></i>
+                        <span style="color: var(--neon-blue); font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">Browser Extension</span>
+                    </div>
+                    
+                    <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        Protect Every Click
+                    </h2>
+                    
+                    <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.8;">
+                        Get real-time phishing protection directly in your browser. Our AI scans every link before you click.
+                    </p>
+                    
+                    <!-- Features Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                        <div>
+                            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚡</div>
+                            <div style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.25rem;">Instant Scan</div>
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;">Real-time analysis</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🛡️</div>
+                            <div style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.25rem;">Auto-Protect</div>
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;">Automatic blocking</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
+                            <div style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.25rem;">Deep Insights</div>
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;">Detailed reports</div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Button -->
+                    {% if user %}
+                    <a href="{{ url_for('download_extension') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.25rem 3rem; background: linear-gradient(135deg, var(--neon-blue) 0%, var(--electric-blue) 100%); border-radius: 14px; color: var(--void-black); font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; box-shadow: 0 4px 20px rgba(0, 217, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <i class="fas fa-download"></i>
+                        Download Extension
+                    </a>
+                    {% else %}
+                    <div style="margin-bottom: 1rem;">
+                        <a href="{{ url_for('register') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.25rem 3rem; background: linear-gradient(135deg, var(--neon-blue) 0%, var(--electric-blue) 100%); border-radius: 14px; color: var(--void-black); font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; box-shadow: 0 4px 20px rgba(0, 217, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account to Download
+                        </a>
+                    </div>
+                    <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}" style="color: var(--neon-blue); text-decoration: none; font-weight: 600;">Sign in</a>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Neural Network Canvas Script -->
+    <script src="{{ url_for('static', filename='js/neural-network.js') }}"></script>
+    
+    <!-- Chatbot Widget -->
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    
+    <!-- Mobile Menu Handler for Premium Landing -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobileMenuPremium);
+        } else {
+            initMobileMenuPremium();
+        }
+        
+        function initMobileMenuPremium() {
+            const menuToggle = document.getElementById('mobileMenuTogglePremium');
+            const mobileNav = document.getElementById('mobileNavPremium');
+            
+            if (!menuToggle || !mobileNav) {
+                console.warn('[TrustLink Premium] Mobile menu elements not found');
+                return;
+            }
+            
+            // Toggle menu on button click
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+            
+            // Close menu when clicking nav links
+            const navLinks = mobileNav.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        closeMenu();
+                    }
+                });
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    if (!mobileNav.contains(e.target) && !menuToggle.contains(e.target)) {
+                        closeMenu();
+                    }
+                }
+            });
+            
+            // Close menu on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                    closeMenu();
+                    menuToggle.focus();
+                }
+            });
+            
+            // Handle window resize
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (window.innerWidth > 768) {
+                        closeMenu();
+                    }
+                }, 250);
+            });
+            
+            // Toggle menu function
+            function toggleMenu() {
+                const isActive = mobileNav.classList.contains('active');
+                if (isActive) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            }
+            
+            // Open menu
+            function openMenu() {
+                mobileNav.classList.add('active');
+                menuToggle.setAttribute('aria-expanded', 'true');
+                
+                // Change icon to X
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+                
+                // Prevent body scroll on mobile
+                if (window.innerWidth <= 768) {
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                // Focus first nav link
+                const firstLink = mobileNav.querySelector('a');
+                if (firstLink) {
+                    setTimeout(() => firstLink.focus(), 100);
+                }
+            }
+            
+            // Close menu
+            function closeMenu() {
+                mobileNav.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                
+                // Change icon back to bars
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+                
+                // Restore body scroll
+                document.body.style.overflow = '';
+            }
+            
+            console.log('[TrustLink Premium] Mobile menu initialized');
+        }
+    })();
+    </script>
+    
+    <!-- Premium Landing Script -->
+    <script>
+        console.log('%c🛡️ TrustLink Premium Landing', 'color: #00d9ff; font-size: 16px; font-weight: bold;');
+    </script>
+</body>
+</html>

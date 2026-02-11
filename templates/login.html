@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Login - TrustLink{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth-vkz.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Login to TrustLink</h2>
+                <p>Access your security dashboard</p>
+            </div>
+
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            {% if success %}
+            <div class="success-message" style="background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #66bb6a;">
+                <i class="fas fa-check-circle"></i>
+                {{ success }}
+            </div>
+            {% endif %}
+            
+            {% if show_resend %}
+            <div class="info-message" style="background: #e3f2fd; color: #1976d2; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+                <i class="fas fa-info-circle"></i>
+                Your email has not been verified yet.
+                <button 
+                    type="button" 
+                    id="resendVerification" 
+                    onclick="resendVerificationEmail({{ user_id }})"
+                    style="display: block; margin-top: 10px; padding: 8px 16px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer;"
+                >
+                    <i class="fas fa-envelope"></i> Resend Verification Email
+                </button>
+                <div id="resendMessage" style="margin-top: 10px;"></div>
+            </div>
+            {% endif %}
+
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="auth-submit-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            
+            <div class="forgot-password-link" style="text-align: center; margin-top: 15px;">
+                <a href="{{ url_for('forgot_password') }}" style="color: #667eea; text-decoration: none; font-size: 14px;">
+                    <i class="fas fa-key"></i> Forgot your password?
+                </a>
+            </div>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                <p><a href="{{ url_for('index') }}">← Back to Scanner</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function resendVerificationEmail(userId) {
+    const button = document.getElementById('resendVerification');
+    const messageDiv = document.getElementById('resendMessage');
+    
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    
+    fetch('{{ url_for("resend_verification") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'user_id=' + userId
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageDiv.innerHTML = '<div style="color: #2e7d32; margin-top: 10px;"><i class="fas fa-check-circle"></i> ' + data.message + '</div>';
+            button.style.display = 'none';
+        } else {
+            messageDiv.innerHTML = '<div style="color: #c62828; margin-top: 10px;"><i class="fas fa-exclamation-circle"></i> ' + data.error + '</div>';
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-envelope"></i> Resend Verification Email';
+        }
+    })
+    .catch(error => {
+        messageDiv.innerHTML = '<div style="color: #c62828; margin-top: 10px;"><i class="fas fa-exclamation-circle"></i> Failed to send email</div>';
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-envelope"></i> Resend Verification Email';
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}TrustLink - AI-Powered Phishing Protection{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vkz-theme.css') }}">
+<style>
+/* Landing Page Specific Styles */
+.vkz-landing {
+    position: relative;
+    min-height: 100vh;
+}
+
+.vkz-section {
+    position: relative;
+    z-index: 10;
+    padding: 6rem 2rem;
+}
+
+/* Feature Grid Animations */
+.feature-grid-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-grid-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Bento Grid Layout */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.bento-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.bento-card:hover::before {
+    left: 100%;
+}
+
+.bento-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(0, 217, 255, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2);
+}
+
+/* CTA Section */
+.vkz-cta {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    border-radius: 24px;
+    padding: 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.vkz-cta::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+    animation: rotate-gradient 20s linear infinite;
+}
+
+@keyframes rotate-gradient {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Floating Animation */
+.float-animation {
+    animation: float-smooth 6s ease-in-out infinite;
+}
+
+@keyframes float-smooth {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(1deg); }
+    50% { transform: translateY(-5px) rotate(-1deg); }
+    75% { transform: translateY(-15px) rotate(0.5deg); }
+}
+
+/* Stat Counter Animation */
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-violet) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Neural Network Background -->
+<div class="neural-background"></div>
+
+<!-- Grain Overlay -->
+<div class="grain-overlay"></div>
+
+<div class="vkz-landing">
+    
+    <!-- Hero Section -->
+    <section class="vkz-hero">
+        <div class="vkz-hero-content">
+            
+            <!-- Badge -->
+            <div class="vkz-badge float-animation">
+                <i class="fas fa-shield-alt"></i> Next-Gen Phishing Protection
+            </div>
+            
+            <!-- Title -->
+            <h1 class="vkz-title">
+                Stop Phishing.<br>
+                <span class="gradient-text">Before It Starts.</span>
+            </h1>
+            
+            <!-- Subtitle -->
+            <p class="vkz-subtitle">
+                TrustLink leverages advanced neural networks to analyze and detect phishing threats in real-time. Browse with confidence, protected by AI that never sleeps.
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;">
+                <a href="{{ url_for('register') }}" class="vkz-scan-btn" style="text-decoration: none; display: inline-block;">
+                    <i class="fas fa-rocket"></i> Get Started Free
+                </a>
+                <a href="{{ url_for('scanner') }}" style="
+                    padding: 1rem 2.5rem;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(0, 217, 255, 0.3);
+                    border-radius: 12px;
+                    color: var(--neon-blue);
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: all 0.3s;
+                    display: inline-block;
+                ">
+                    <i class="fas fa-search"></i> Try Scanner
+                </a>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div style="display: flex; gap: 3rem; justify-content: center; margin-top: 4rem; flex-wrap: wrap; opacity: 0.7;">
+                <div style="text-align: center;">
+                    <div class="stat-number">{{ model_accuracy }}</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;">Detection Rate</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="stat-number">&lt;1s</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;">Analysis Time</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="stat-number">24/7</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;">Active Shield</div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="vkz-section">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <div class="vkz-badge" style="margin-bottom: 1.5rem;">
+                <i class="fas fa-bolt"></i> Powered by AI
+            </div>
+            <h2 style="font-size: 3rem; font-weight: 900; margin-bottom: 1rem;">
+                Enterprise-Grade<br>
+                <span style="background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-violet) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Security Features</span>
+            </h2>
+        </div>
+        
+        <div class="bento-grid">
+            
+            <!-- Feature 1 -->
+            <div class="bento-card feature-grid-item">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">🤖</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--neon-blue);">
+                    Neural Network Analysis
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); line-height: 1.8;">
+                    Advanced deep learning models trained on millions of phishing patterns detect threats with unprecedented accuracy.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bento-card feature-grid-item" style="transition-delay: 0.1s;">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">⚡</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--neon-blue);">
+                    Lightning Fast
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); line-height: 1.8;">
+                    Get instant threat assessments in under a second. Lightning-fast analysis with no waiting—just immediate protection.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bento-card feature-grid-item" style="transition-delay: 0.2s;">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">🔍</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--neon-blue);">
+                    Deep URL Inspection
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); line-height: 1.8;">
+                    Multi-layered analysis examines URL structure, SSL certificates, domain reputation, and behavioral patterns.
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="bento-card feature-grid-item" style="transition-delay: 0.3s;">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">📊</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--neon-blue);">
+                    Analytics Dashboard
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); line-height: 1.8;">
+                    Track your scan history, monitor threats, and visualize security trends with our premium dashboard.
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="bento-card feature-grid-item" style="transition-delay: 0.4s;">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">🌐</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--neon-blue);">
+                    Browser Extension
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); line-height: 1.8;">
+                    Seamless protection while browsing. Our Chrome extension scans links automatically before you click.
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="bento-card feature-grid-item" style="transition-delay: 0.5s;">
+                <div style="font-size: 3rem; margin-bottom: 1.5rem;">🔐</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--neon-blue);">
+                    API Access
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); line-height: 1.8;">
+                    Integrate TrustLink into your applications with our developer-friendly REST API.
+                </p>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="vkz-section">
+        <div class="vkz-cta" style="max-width: 900px; margin: 0 auto; position: relative;">
+            <div style="position: relative; z-index: 2;">
+                <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1.5rem;">
+                    Ready to Stay Protected?
+                </h2>
+                <p style="font-size: 1.2rem; color: rgba(255,255,255,0.7); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Join thousands of users who trust TrustLink to keep them safe from phishing attacks.
+                </p>
+                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{{ url_for('register') }}" class="vkz-scan-btn" style="text-decoration: none; display: inline-block;">
+                        <i class="fas fa-user-plus"></i> Create Free Account
+                    </a>
+                    <a href="{{ url_for('scanner') }}" style="
+                        padding: 1rem 2.5rem;
+                        background: rgba(147, 51, 234, 0.2);
+                        border: 1px solid rgba(147, 51, 234, 0.4);
+                        border-radius: 12px;
+                        color: var(--neon-violet);
+                        font-weight: 600;
+                        text-decoration: none;
+                        transition: all 0.3s;
+                        display: inline-block;
+                    ">
+                        <i class="fas fa-flask"></i> Test Scanner
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+</div>
+
+<script src="{{ url_for('static', filename='js/neural-network.js') }}"></script>
+<script>
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, {
+    threshold: 0.1
+});
+
+document.querySelectorAll('.feature-grid-item').forEach(item => {
+    observer.observe(item);
+});
+
+// Animate stat numbers on scroll
+const statNumbers = document.querySelectorAll('.stat-number');
+let animated = false;
+
+window.addEventListener('scroll', () => {
+    if (!animated && window.scrollY > 100) {
+        animated = true;
+        statNumbers.forEach((stat, index) => {
+            setTimeout(() => {
+                stat.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    stat.style.transform = 'scale(1)';
+                }, 200);
+            }, index * 100);
+        });
+    }
+});
+</script>
+{% endblock %}

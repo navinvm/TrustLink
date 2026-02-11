@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}TrustLink - AI-Powered Phishing Defense{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hero-animation.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Animation Section -->
+<section class="hero-animation-section">
+    <div class="animation-container" id="animationContainer">
+        
+        <!-- Scene 1: The Problem -->
+        <div class="animation-scene scene-1" id="scene1">
+            <div class="scene-content">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="laptop">
+                    <div class="laptop-screen">
+                        <div class="suspicious-email">
+                            <div class="email-header">
+                                <i class="fas fa-envelope"></i>
+                                <span>Urgent: Verify Your Account</span>
+                            </div>
+                            <div class="suspicious-link">
+                                <span class="link-text">http://secure-bank-verify.com/login?redirect=http://malicious-site.tk/steal-data</span>
+                                <i class="fas fa-question-circle question-mark"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="standard-security">
+                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-question shrug-icon"></i>
+                </div>
+            </div>
+            <div class="scene-text">Is this link safe?</div>
+        </div>
+
+        <!-- Scene 2: TrustLink Solution -->
+        <div class="animation-scene scene-2" id="scene2">
+            <div class="scene-content">
+                <div class="trustlink-shield">
+                    <img src="{{ url_for('static', filename='images/img.png') }}" alt="TrustLink" class="shield-logo">
+                    <div class="pulse-ring"></div>
+                </div>
+                <div class="url-input-animation">
+                    <input type="text" class="animated-input" value="http://secure-bank-verify.com/login?redirect=http://malicious-site.tk/steal-data" readonly>
+                    <button class="analyze-btn-animation">
+                        <i class="fas fa-bolt"></i>
+                        Analyze
+                    </button>
+                </div>
+                <div class="url-breakdown">
+                    <div class="url-part domain">
+                        <span class="part-label">Domain</span>
+                        <span class="part-value">secure-bank-verify.com</span>
+                    </div>
+                    <div class="url-part path">
+                        <span class="part-label">Path</span>
+                        <span class="part-value">/login</span>
+                    </div>
+                    <div class="url-part query">
+                        <span class="part-label">Parameters</span>
+                        <span class="part-value">redirect=...</span>
+                    </div>
+                </div>
+                <div class="ai-brain">
+                    <div class="neural-network">
+                        <div class="neuron-layer layer-1">
+                            <div class="neuron"></div>
+                            <div class="neuron"></div>
+                            <div class="neuron"></div>
+                        </div>
+                        <div class="neuron-layer layer-2">
+                            <div class="neuron"></div>
+                            <div class="neuron"></div>
+                            <div class="neuron"></div>
+                            <div class="neuron"></div>
+                        </div>
+                        <div class="neuron-layer layer-3">
+                            <div class="neuron"></div>
+                            <div class="neuron"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scene-text analyzing">
+                <span class="text-line-1">Analyzing URL Structure...</span>
+                <span class="text-line-2">Pattern Recognition Active</span>
+            </div>
+        </div>
+
+        <!-- Scene 3: AI Analysis -->
+        <div class="animation-scene scene-3" id="scene3">
+            <div class="scene-content">
+                <div class="analysis-metrics">
+                    <div class="metric-item length-check">
+                        <i class="fas fa-ruler-horizontal"></i>
+                        <span class="metric-label">URL Length</span>
+                        <div class="metric-bar">
+                            <div class="metric-progress danger-zone"></div>
+                        </div>
+                        <i class="fas fa-exclamation-triangle warning-icon"></i>
+                    </div>
+                    <div class="metric-item special-chars">
+                        <i class="fas fa-hashtag"></i>
+                        <span class="metric-label">Special Characters</span>
+                        <div class="char-highlights">
+                            <span class="highlight">@</span>
+                            <span class="highlight">-</span>
+                            <span class="highlight">//</span>
+                        </div>
+                        <i class="fas fa-exclamation-triangle warning-icon"></i>
+                    </div>
+                    <div class="metric-item ssl-check">
+                        <i class="fas fa-lock"></i>
+                        <span class="metric-label">SSL Certificate</span>
+                        <div class="fake-ssl">
+                            <div class="fake-lock">🔒</div>
+                            <div class="shatter-effect"></div>
+                        </div>
+                        <span class="ssl-warning">Not a guarantee!</span>
+                    </div>
+                </div>
+                <div class="data-stream">
+                    <div class="dataset-icon">
+                        <i class="fas fa-database"></i>
+                        <span>Kaggle Dataset</span>
+                        <span class="dataset-size">85K+ URLs</span>
+                    </div>
+                    <div class="stream-particles">
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                    </div>
+                    <div class="ai-model">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Model</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scene-text">Scanning for suspicious patterns: Length, Characters, SSL...</div>
+        </div>
+
+        <!-- Scene 4: Defense & Result -->
+        <div class="animation-scene scene-4" id="scene4">
+            <div class="scene-content split-screen">
+                <div class="left-panel standard-method">
+                    <h3>Standard Blacklist</h3>
+                    <div class="blacklist-check">
+                        <div class="threat-list">
+                            <div class="list-item">known-phish1.com</div>
+                            <div class="list-item">known-phish2.com</div>
+                            <div class="list-item">known-phish3.com</div>
+                        </div>
+                        <div class="check-result">
+                            <i class="fas fa-times-circle red-x"></i>
+                            <span>Not on List</span>
+                        </div>
+                        <div class="zero-day-phantom">
+                            <i class="fas fa-ghost"></i>
+                            <span>Zero-Day Threat Sneaks Past</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="divider-line"></div>
+                
+                <div class="right-panel trustlink-method">
+                    <h3>TrustLink AI</h3>
+                    <div class="ai-processing">
+                        <div class="ai-glow"></div>
+                        <div class="processing-text">Processing Structure...</div>
+                    </div>
+                    <div class="verdict-stamp phishing">
+                        <div class="stamp-content">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span class="verdict-text">PHISHING</span>
+                            <span class="risk-level">HIGH RISK</span>
+                        </div>
+                    </div>
+                    <div class="protected-user">
+                        <i class="fas fa-user-shield"></i>
+                        <div class="shield-barrier"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="scene-text">
+                <span class="text-line-1">Catches zero-day threats blacklists miss</span>
+                <span class="text-line-2">"Legitimate" or "Phishing" – Know Instantly</span>
+            </div>
+        </div>
+
+        <!-- Scene 5: Tech Stack & CTA -->
+        <div class="animation-scene scene-5" id="scene5">
+            <div class="scene-content">
+                <div class="tech-stack">
+                    <div class="tech-logo python">
+                        <i class="fab fa-python"></i>
+                        <span>Python</span>
+                    </div>
+                    <div class="tech-logo sklearn">
+                        <i class="fas fa-brain"></i>
+                        <span>Scikit-learn</span>
+                    </div>
+                    <div class="tech-logo flask">
+                        <i class="fas fa-flask"></i>
+                        <span>Flask</span>
+                    </div>
+                </div>
+                <div class="trustlink-final-logo">
+                    <img src="{{ url_for('static', filename='images/img.png') }}" alt="TrustLink">
+                </div>
+                <div class="cta-buttons">
+                    <a href="{{ url_for('index') }}" class="cta-btn primary">
+                        <i class="fas fa-play-circle"></i>
+                        Try Demo
+                    </a>
+                    <a href="#extension" class="cta-btn secondary">
+                        <i class="fas fa-download"></i>
+                        Add to Browser
+                    </a>
+                </div>
+            </div>
+            <div class="scene-text">Powered by AI & Pattern Recognition</div>
+        </div>
+
+        <!-- Animation Controls -->
+        <div class="animation-controls">
+            <button id="playPauseBtn" class="control-btn">
+                <i class="fas fa-pause"></i>
+            </button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <button id="replayBtn" class="control-btn">
+                <i class="fas fa-redo"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Continue to Main Content -->
+<section class="main-content">
+    <div class="container">
+        <h2>How TrustLink Protects You</h2>
+        <p>Explore our advanced phishing detection system...</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Get Started</a>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/hero-animation.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %}About TrustLink - Technology{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hero-animation.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animation-variants.css') }}">
+<style>
+/* About page specific styles */
+.about-animation-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0A0B1E 0%, #1a0b3a 50%, #0A0B1E 100%);
+}
+
+.tech-focus-animation {
+    padding: var(--spacing-xl) 0;
+}
+
+.tech-showcase {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+.tech-intro {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.tech-intro h1 {
+    font-size: 3rem;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 30px rgba(0, 210, 255, 0.6);
+    margin-bottom: var(--spacing-md);
+}
+
+.tech-intro p {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.tech-timeline {
+    position: relative;
+    padding: var(--spacing-xl) 0;
+}
+
+.timeline-item {
+    display: flex;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    align-items: center;
+    opacity: 0;
+    animation: slideInTimeline 1s ease forwards;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.3s; }
+.timeline-item:nth-child(2) { animation-delay: 0.6s; }
+.timeline-item:nth-child(3) { animation-delay: 0.9s; }
+.timeline-item:nth-child(4) { animation-delay: 1.2s; }
+
+@keyframes slideInTimeline {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.timeline-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+    position: relative;
+}
+
+.timeline-icon::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--accent-cyan), transparent);
+}
+
+.timeline-item:last-child .timeline-icon::after {
+    display: none;
+}
+
+.timeline-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+}
+
+.timeline-content h3 {
+    font-size: 1.5rem;
+    color: var(--accent-cyan);
+    margin-bottom: var(--spacing-sm);
+}
+
+.timeline-content p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.tech-stack-detailed {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.tech-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    transition: all 0.3s ease;
+    animation: fadeInUp 1s ease both;
+}
+
+.tech-card:nth-child(1) { animation-delay: 1.5s; }
+.tech-card:nth-child(2) { animation-delay: 1.7s; }
+.tech-card:nth-child(3) { animation-delay: 1.9s; }
+.tech-card:nth-child(4) { animation-delay: 2.1s; }
+.tech-card:nth-child(5) { animation-delay: 2.3s; }
+.tech-card:nth-child(6) { animation-delay: 2.5s; }
+
+.tech-card:hover {
+    border-color: rgba(0, 210, 255, 0.6);
+    box-shadow: 0 0 40px rgba(0, 210, 255, 0.4);
+    transform: translateY(-10px);
+}
+
+.tech-card-icon {
+    font-size: 3rem;
+    color: var(--accent-cyan);
+    margin-bottom: var(--spacing-md);
+    filter: drop-shadow(0 0 15px var(--accent-cyan));
+}
+
+.tech-card h4 {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.tech-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.tech-card ul {
+    margin-top: var(--spacing-sm);
+    padding-left: var(--spacing-md);
+    color: var(--text-secondary);
+}
+
+.tech-card li {
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .tech-intro h1 {
+        font-size: 2rem;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .timeline-icon::after {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-animation-wrapper">
+    <section class="tech-focus-animation">
+        <div class="tech-showcase">
+            <!-- Hero Section -->
+            <div class="tech-intro">
+                <img src="{{ url_for('static', filename='images/img.png') }}" 
+                     alt="TrustLink" 
+                     style="width: 200px; height: auto; margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(0, 210, 255, 0.6));">
+                <h1>The Technology Behind TrustLink</h1>
+                <p>
+                    Discover how advanced machine learning and pattern recognition 
+                    create the most sophisticated phishing detection system available.
+                </p>
+            </div>
+
+            <!-- Technology Timeline -->
+            <div class="tech-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>1. Data Collection & Training</h3>
+                        <p>
+                            Our AI model is trained on over 5 million URLs from curated datasets including 
+                            Kaggle's comprehensive phishing databases. This massive training set includes 
+                            both legitimate and malicious URLs, teaching the model to recognize subtle 
+                            patterns that indicate phishing attempts.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>2. Pattern Recognition Engine</h3>
+                        <p>
+                            Using Scikit-learn's advanced machine learning algorithms, TrustLink analyzes 
+                            URL structure, length, special character frequency, domain patterns, and 
+                            behavioral indicators. Unlike simple blacklists, our AI understands the 
+                            <strong>why</strong> behind phishing URLs.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>3. Real-Time Analysis</h3>
+                        <p>
+                            When you submit a URL, our Flask-powered backend processes it in real-time, 
+                            extracting dozens of features and running them through our neural network. 
+                            The result: lightning-fast threat assessment with confidence scoring.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>4. Zero-Day Protection</h3>
+                        <p>
+                            The power of pattern recognition means TrustLink can catch <strong>zero-day 
+                            phishing attacks</strong> – brand new threats that aren't in any blacklist yet. 
+                            If it looks like a phishing URL based on structural patterns, we'll catch it.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Tech Stack -->
+            <div class="tech-stack-detailed">
+                <div class="tech-card">
+                    <div class="tech-card-icon">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <h4>Python 3.10+</h4>
+                    <p>
+                        Core programming language providing the foundation for our machine learning 
+                        pipeline and web application. Python's rich ecosystem enables rapid development 
+                        and deployment.
+                    </p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>Scikit-learn</h4>
+                    <p>
+                        Industry-standard machine learning library powering our pattern recognition 
+                        algorithms. Features include:
+                    </p>
+                    <ul>
+                        <li>Random Forest Classifier</li>
+                        <li>Feature extraction & engineering</li>
+                        <li>Model validation & testing</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h4>Flask Framework</h4>
+                    <p>
+                        Lightweight yet powerful web framework handling API requests, user authentication, 
+                        and real-time URL scanning. RESTful architecture ensures scalability.
+                    </p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h4>SQLite Database</h4>
+                    <p>
+                        Efficient data storage for user accounts, scan history, whitelists, and analytics. 
+                        Fast queries and reliable performance for production use.
+                    </p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-icon">
+                        <i class="fas fa-chart-network"></i>
+                    </div>
+                    <h4>Feature Engineering</h4>
+                    <p>
+                        Advanced URL analysis extracting 50+ features including:
+                    </p>
+                    <ul>
+                        <li>URL entropy & complexity</li>
+                        <li>Domain age & reputation</li>
+                        <li>Special character patterns</li>
+                        <li>SSL/TLS indicators</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h4>Modern Web Technologies</h4>
+                    <p>
+                        Glassmorphism UI with CSS animations, JavaScript for interactivity, 
+                        and responsive design. Browser extension built with Web Extensions API.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div style="text-align: center; margin-top: 4rem;">
+                <a href="/" class="cta-btn primary" style="display: inline-flex; padding: 1rem 2rem; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color: white; text-decoration: none; border-radius: 12px; font-size: 1.2rem; font-weight: 700; gap: 0.5rem; box-shadow: 0 0 30px rgba(0, 210, 255, 0.5); transition: all 0.3s ease;">
+                    <i class="fas fa-rocket"></i>
+                    Try TrustLink Now
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

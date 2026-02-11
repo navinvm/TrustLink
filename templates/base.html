@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TrustLink - Advanced Phishing Detection using Pattern Recognition">
+    <title>{% block title %}TrustLink - Phishing Detection{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS - VKZ Global Theme First -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vkz-global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/glassmorphism.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/improvements.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-fixes.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- VKZ Studio Background Effects -->
+    <div class="neural-network-bg">
+        <canvas id="neuralCanvas"></canvas>
+    </div>
+    <div class="grain-overlay"></div>
+    <div class="light-orb light-orb-1"></div>
+    <div class="light-orb light-orb-2"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/" style="display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit;">
+                        <img src="{{ url_for('static', filename='images/img.png') }}" alt="TrustLink Logo" style="height: 40px; width: auto;">
+                        <span class="logo-text">TrustLink</span>
+                    </a>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav class="nav" id="mobileNav">
+                    <a href="{{ url_for('scanner') }}" class="nav-link"><i class="fas fa-search"></i> Scanner</a>
+                    {% if user %}
+                    <a href="{{ url_for('dashboard') }}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="{{ url_for('download_extension') }}" class="nav-link"><i class="fas fa-puzzle-piece"></i> Extension</a>
+                    <a href="{{ url_for('history') }}" class="nav-link"><i class="fas fa-history"></i> History</a>
+                    <a href="{{ url_for('analytics') }}" class="nav-link"><i class="fas fa-chart-line"></i> Analytics</a>
+                    <a href="{{ url_for('about') }}" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+                    {% if user.is_admin %}
+                    <a href="{{ url_for('whitelist_page') }}" class="nav-link"><i class="fas fa-shield-check"></i> Whitelist</a>
+                    {% endif %}
+                    <div class="nav-user">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ user.username }}</span>
+                        <a href="{{ url_for('logout') }}" class="logout-link">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('about') }}" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+                    <a href="{{ url_for('login') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="{{ url_for('register') }}" class="nav-link nav-link-highlight"><i class="fas fa-user-plus"></i> Register</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 TrustLink. NAVIN</p>
+                <div class="footer-links">
+                    <a href="{{ url_for('privacy') }}"><i class="fas fa-shield-alt"></i> Privacy & Security</a>
+                    <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Neural Network Background Script -->
+    <script src="{{ url_for('static', filename='js/neural-network.js') }}"></script>
+    
+    <!-- Mobile Menu Handler -->
+    <script src="{{ url_for('static', filename='js/mobile-menu.js') }}"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/scroll-animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui-improvements.js') }}"></script>
+    
+    <!-- AI Chatbot Widget -->
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    
+    <!-- main.js disabled - using vkz-scanner.js instead -->
+    <!-- <script src="{{ url_for('static', filename='js/main.js') }}?v=8"></script> -->
+    <script>
+        // Inline verification that JS is working
+        console.log('%c🛡️ TrustLink VKZ Studio Theme', 'color: #00d9ff; font-size: 14px; font-weight: bold;');
+        window.trustlinkLoaded = true;
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

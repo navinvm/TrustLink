@@ -1,0 +1,124 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║        🤖 TRUSTLINK FREE AI CHATBOT - QUICK START 🤖          ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+✅ STATUS: ENABLED AND READY TO USE!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 HOW TO USE (3 STEPS):
+
+1. Start server:
+   python app.py
+
+2. Open browser:
+   http://localhost:5000
+
+3. Click purple chat button in bottom-right corner!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 KEY FACTS:
+
+✨ 100% FREE - No API keys, no costs, forever
+✨ Powered by Mistral-7B (advanced open-source AI)
+✨ Works on ALL pages (integrated in base template)
+✨ Context-aware (knows your scan history)
+✨ Beautiful UI with animations
+✨ Mobile responsive
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏱️ RESPONSE TIMES:
+
+First message: 10-20 seconds (model loading - one time only)
+After that: 2-5 seconds per message
+
+This is normal for the free tier! If you want faster responses,
+get a FREE HuggingFace token (see FREE_CHATBOT_SETUP.md)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 TRY THESE QUESTIONS:
+
+• "How does TrustLink detect phishing?"
+• "What are signs of a phishing website?"
+• "Can you explain my last scan?"
+• "Is HTTPS always safe?"
+• "How do I protect myself from phishing?"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚙️ CONFIGURATION (.env):
+
+CHATBOT_PROVIDER=huggingface  ← FREE option (current)
+CHATBOT_ENABLED=true          ← Already enabled
+HUGGINGFACE_MODEL=mistralai/Mistral-7B-Instruct-v0.2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 CUSTOMIZATION:
+
+Change AI Model:
+  Edit HUGGINGFACE_MODEL in .env
+  Options: microsoft/DialoGPT-medium (faster)
+           TinyLlama/TinyLlama-1.1B-Chat-v1.0 (very fast)
+
+Change Colors:
+  Edit static/css/chatbot.css
+  Search for: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+
+Change AI Personality:
+  Edit chatbot.py → get_system_prompt() method
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆓 UPGRADE TO FASTER (STILL FREE!):
+
+1. Sign up: https://huggingface.co/join
+2. Get token: https://huggingface.co/settings/tokens
+3. Add to .env: HUGGINGFACE_API_KEY=hf_your_token
+4. Restart server
+5. Enjoy faster responses!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 TROUBLESHOOTING:
+
+❓ "Model is loading" message?
+   → Normal! Wait 10-20 seconds and try again.
+
+❓ Chatbot button not appearing?
+   → Check console: Should say "✓ AI Chatbot enabled with Hugging Face"
+   → Clear browser cache and reload
+
+❓ Responses too slow?
+   → Get free HuggingFace token (see above)
+   → Or switch to faster model in .env
+
+❓ Want to switch to OpenAI?
+   → Set CHATBOT_PROVIDER=openai in .env
+   → Add OPENAI_API_KEY=sk-your-key
+   → pip install openai
+   → Restart server
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION:
+
+📖 FREE_CHATBOT_SETUP.md  - Complete free chatbot guide
+📖 CHATBOT_SETUP.md       - Detailed technical docs
+📖 .env                   - Configuration (already setup!)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 YOU'RE ALL SET!
+
+Your chatbot is LIVE and ready to use. Just start your server
+and click the purple floating button!
+
+Questions? Check FREE_CHATBOT_SETUP.md for detailed info.
+
+Happy chatting! 💬✨

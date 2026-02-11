@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+/* Simple loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 11, 30, 0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    border: 6px solid rgba(0, 210, 255, 0.2);
+    border-top: 6px solid #00D2FF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 2rem;
+    box-shadow: 0 0 40px rgba(0, 210, 255, 0.4);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 1.5rem;
+    color: #00D2FF;
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.loading-subtext {
+    font-size: 1rem;
+    color: #b8b9d4;
+    margin-top: 0.5rem;
+}
+
+/* Traffic Light Animation */
+@keyframes pulse-glow {
+    0%, 100% { 
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% { 
+        transform: scale(1.05);
+        filter: brightness(1.2);
+    }
+}
+
+/* Moderate Risk Styling */
+.shield-verdict.moderate {
+    color: #ff9900;
+    text-shadow: 0 0 20px rgba(255, 153, 0, 0.8);
+}
+
+.shield-icon.moderate {
+    border-color: #ff9900;
+}
+
+.status-badge-glass.moderate {
+    background: rgba(255, 153, 0, 0.2);
+    color: #ff9900;
+    border: 1px solid #ff9900;
+}
+
+.risk-badge-glass.moderate {
+    background: rgba(255, 153, 0, 0.2);
+    color: #ff9900;
+    border: 1px solid #ff9900;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Debug Panel (Remove after fixing) -->
+<div style="position: fixed; top: 10px; right: 10px; background: black; color: lime; padding: 15px; border: 2px solid lime; border-radius: 8px; font-family: monospace; font-size: 11px; max-width: 400px; max-height: 300px; overflow-y: auto; z-index: 99999;" id="debugPanel">
+    <div id="debugLog">Waiting for scripts...</div>
+</div>
+
+<script>
+    // Immediate inline script to test if ANY JavaScript works
+    (function() {
+        var debugLog = document.getElementById('debugLog');
+        function addLog(msg) {
+            if (debugLog) {
+                debugLog.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + msg;
+            }
+        }
+        
+        addLog('✅ Inline script executing!');
+        addLog('Window loaded: ' + (document.readyState));
+        
+        // Check if form exists
+        var checkForm = setInterval(function() {
+            var form = document.getElementById('scanForm');
+            if (form) {
+                addLog('✅ Form found!');
+                clearInterval(checkForm);
+                
+                addLog('⏳ Waiting for main.js to load...');
+                
+                // Check if main.js loaded its display function
+                var checkMainJS = setInterval(function() {
+                    if (window.displayResults || document.readyState === 'complete') {
+                        clearInterval(checkMainJS);
+                        addLog('✅ Page ready - main.js should handle the form');
+                        addLog('window.displayResults exists? ' + (!!window.displayResults));
+                        addLog('window.trustlinkLoaded? ' + (!!window.trustlinkLoaded));
+                        
+                        // Check if form has listeners
+                        var listeners = getEventListeners ? getEventListeners(form) : 'N/A';
+                        addLog('Form has submit listeners? ' + (listeners !== 'N/A' ? (listeners.submit ? listeners.submit.length : 0) : 'Unknown'));
+                    }
+                }, 100);
+                
+                // Add our own listener with highest priority to debug
+                form.addEventListener('submit', function(e) {
+                    addLog('⚠️ BACKUP LISTENER CAUGHT SUBMIT!');
+                    addLog('Form action: ' + form.action);
+                    addLog('preventDefault will be called...');
+                }, true); // Use capture phase
+            }
+        }, 100);
+        
+        addLog('Script complete');
+    })();
+</script>
+
+<!-- Simple Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Analyzing URL...</div>
+        <div class="loading-subtext">AI Pattern Recognition Active</div>
+    </div>
+</div>
+
+<!-- Scanner Section -->
+<section class="scanner-section">
+    <div class="scanner-container glass-container">
+        <div class="scanner-header">
+            <h2><i class="fas fa-shield-virus"></i> URL Threat Analyzer</h2>
+            <p>Paste any suspicious URL for AI-powered threat detection</p>
+        </div>
+        
+        <form id="scanForm" class="scan-form">
+            <div class="input-group-glass">
+                <i class="fas fa-link input-icon-glass"></i>
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    class="url-input-glass" 
+                    placeholder="https://suspicious-site.com/login"
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit" class="analyze-btn-glass" id="analyzeBtn">
+                    <i class="fas fa-bolt"></i>
+                    <span>Analyze</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Error Container -->
+        <div id="errorContainer" class="error-container hidden"></div>
+        
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator hidden">
+            <div class="spinner"></div>
+            <p>Analyzing URL patterns...</p>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="results-container hidden">
+            <!-- Status Shield -->
+            <div class="status-shield" id="statusShield">
+                <div class="shield-glow" id="shieldGlow"></div>
+                <div class="shield-icon" id="shieldIcon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="shield-verdict" id="shieldVerdict">Analyzing...</div>
+                <div class="shield-subtitle" id="shieldSubtitle">Processing threat intelligence</div>
+            </div>
+
+            <!-- Pattern Analysis Panel -->
+            <div class="pattern-panel glass-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-chart-network"></i>
+                    Pattern Breakdown
+                </h3>
+                <div class="pattern-metrics">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-random"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">URL Entropy</div>
+                            <div class="metric-value" id="entropyValue">0.0</div>
+                            <div class="metric-bar">
+                                <div class="metric-progress" id="entropyProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-ruler-horizontal"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">Length Score</div>
+                            <div class="metric-value" id="lengthValue">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-progress" id="lengthProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-hashtag"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">Special Chars</div>
+                            <div class="metric-value" id="specialCharsValue">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-progress" id="specialCharsProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confidence Score -->
+                <div class="confidence-section-glass">
+                    <div class="confidence-header">
+                        <span class="confidence-label-glass">AI Confidence Score</span>
+                        <span id="confidenceValue" class="confidence-value-glass">0%</span>
+                    </div>
+                    <div class="confidence-bar-glass">
+                        <div id="confidenceProgress" class="confidence-progress-glass"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zero-Day Alert Badge -->
+            <div class="zero-day-alert hidden" id="zeroDayAlert">
+                <div class="alert-glow"></div>
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="alert-content">
+                    <strong>Zero-Day Detection</strong>
+                    <span>This threat was not found in standard blacklists</span>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis -->
+            <div class="details-panel glass-panel">
+                <h4><i class="fas fa-clipboard-list"></i> Threat Intelligence</h4>
+                <div class="assessment-grid-glass">
+                    <div class="assessment-item-glass">
+                        <span class="assessment-label-glass">Status:</span>
+                        <span id="statusBadge" class="status-badge-glass">Unknown</span>
+                    </div>
+                    <div class="assessment-item-glass">
+                        <span class="assessment-label-glass">Risk Level:</span>
+                        <span id="riskLevel" class="risk-badge-glass">Unknown</span>
+                    </div>
+                </div>
+                <ul class="details-list-glass" id="detailsList">
+                    <!-- Details will be populated by JavaScript -->
+                </ul>
+            </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="document.getElementById('scanForm').reset(); document.getElementById('resultsContainer').classList.add('hidden');">
+                            <i class="fas fa-redo"></i> Scan Another URL
+                        </button>
+                        <button class="btn-primary" onclick="alert('Report functionality coming soon!')">
+                            <i class="fas fa-flag"></i> Report False Positive
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h3 class="features-title">Advanced Detection Capabilities</h3>
+    <div class="features-grid">
+        <div class="feature-card">
+            <i class="fas fa-brain"></i>
+            <h4>Machine Learning</h4>
+            <p>Trained on millions of URLs for accurate threat detection</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-bolt"></i>
+            <h4>Real-Time Analysis</h4>
+            <p>Lightning-fast results with real-time processing</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h4>Multi-Layer Protection</h4>
+            <p>Pattern recognition, domain analysis, and behavioral detection</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-chart-line"></i>
+            <h4>Confidence Scoring</h4>
+            <p>Transparent probability scores for each prediction</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

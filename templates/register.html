@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Register - TrustLink{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth-vkz.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Join the TrustLink security platform</p>
+            </div>
+
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            {% if success %}
+            <div class="success-message" style="background: #e8f5e9; color: #2e7d32; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #66bb6a;">
+                <i class="fas fa-check-circle" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                <strong>{{ success }}</strong>
+                <p style="margin-top: 10px; font-size: 14px;">
+                    Check your inbox and click the verification link to activate your account.
+                </p>
+                <a href="{{ url_for('login') }}" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: #2e7d32; color: white; text-decoration: none; border-radius: 6px;">
+                    Go to Login
+                </a>
+            </div>
+            {% else %}
+
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input type="text" id="username" name="username" required autocomplete="username" minlength="3">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input type="email" id="email" name="email" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="password" name="password" required autocomplete="new-password" minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">
+                        <i class="fas fa-lock"></i> Confirm Password
+                    </label>
+                    <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password" minlength="6">
+                </div>
+
+                <button type="submit" class="auth-submit-btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            
+            <div class="password-requirements" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 13px;">
+                <strong style="color: #333;"><i class="fas fa-info-circle"></i> Password Requirements:</strong>
+                <ul style="margin: 10px 0 0 20px; color: #666; line-height: 1.8;">
+                    <li>Minimum 8 characters</li>
+                    <li>At least one uppercase letter</li>
+                    <li>At least one lowercase letter</li>
+                    <li>At least one number</li>
+                    <li>At least one special character</li>
+                </ul>
+            </div>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+                <p><a href="{{ url_for('index') }}">← Back to Scanner</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

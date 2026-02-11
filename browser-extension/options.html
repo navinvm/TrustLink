@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustLink Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <img src="icons/trustlink-logo.png" alt="TrustLink" class="logo">
+        <div>
+          <h1>TrustLink Settings</h1>
+          <p class="subtitle">Configure your phishing protection preferences</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Connection Settings -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-icon"></span>
+          Connection Settings
+        </h2>
+        <div class="form-group">
+          <label for="apiUrl" class="label">
+            TrustLink API URL
+            <span class="label-info">The backend server URL</span>
+          </label>
+          <input 
+            type="url" 
+            id="apiUrl" 
+            class="input" 
+            placeholder="https://your-trustlink-server.com"
+          >
+        </div>
+        <div class="form-group">
+          <label for="apiKey" class="label">
+            API Key (Optional)
+            <span class="label-info">For authenticated API access and advanced features</span>
+          </label>
+          <div class="input-group">
+            <input 
+              type="password" 
+              id="apiKey" 
+              class="input" 
+              placeholder="Enter your API key"
+            >
+            <button id="toggleApiKey" class="btn-icon" title="Show/Hide API key">
+              Show
+            </button>
+          </div>
+          <small class="help-text">
+            Get your API key from the <a href="#" id="dashboardLink">TrustLink Dashboard</a>
+          </small>
+        </div>
+        <button id="testConnection" class="btn btn-secondary">
+          <span>Test Connection</span>
+        </button>
+        <div id="connectionStatus" class="status-message" style="display: none;"></div>
+      </section>
+
+      <!-- Scanning Settings -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-icon"></span>
+          Scanning Settings
+        </h2>
+        
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="enableRealTimeScanning" class="checkbox">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                <strong>Enable Real-Time Scanning</strong>
+                <small>Automatically scan links as you browse</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="autoScanOnPageLoad" class="checkbox">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                <strong>Auto-Scan on Page Load</strong>
+                <small>Scan all links when a page loads</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="scanDelay" class="label">
+            Scan Delay
+            <span class="label-info">Delay before scanning new links (in milliseconds)</span>
+          </label>
+          <div class="slider-group">
+            <input 
+              type="range" 
+              id="scanDelay" 
+              class="slider" 
+              min="0" 
+              max="2000" 
+              step="100"
+            >
+            <span id="scanDelayValue" class="slider-value">500ms</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confidenceThreshold" class="label">
+            Confidence Threshold
+            <span class="label-info">Minimum confidence to show warnings (%)</span>
+          </label>
+          <div class="slider-group">
+            <input 
+              type="range" 
+              id="confidenceThreshold" 
+              class="slider" 
+              min="0" 
+              max="100" 
+              step="5"
+            >
+            <span id="confidenceThresholdValue" class="slider-value">50%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Display Settings -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-icon"></span>
+          Display Settings
+        </h2>
+        
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showSafeIndicators" class="checkbox">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                <strong>Show Safe Link Indicators</strong>
+                <small>Display checkmarks for verified safe links</small>
+              </span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cache Settings -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-icon"></span>
+          Cache Settings
+        </h2>
+        
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="cacheEnabled" class="checkbox">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                <strong>Enable Caching</strong>
+                <small>Cache scan results to reduce API calls</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cacheDuration" class="label">
+            Cache Duration
+            <span class="label-info">How long to keep cached results</span>
+          </label>
+          <select id="cacheDuration" class="select">
+            <option value="3600000">1 Hour</option>
+            <option value="21600000">6 Hours</option>
+            <option value="43200000">12 Hours</option>
+            <option value="86400000">24 Hours</option>
+            <option value="259200000">3 Days</option>
+            <option value="604800000">7 Days</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button id="clearCache" class="btn btn-outline">
+            <span>Clear Cache Now</span>
+          </button>
+          <div id="cacheStats" class="cache-stats"></div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-icon"></span>
+          About
+        </h2>
+        <div class="about-content">
+          <p><strong>TrustLink Browser Extension v1.0.0</strong></p>
+          <p>Real-time phishing protection powered by machine learning.</p>
+          <div class="about-links">
+            <a href="#" id="viewDocumentation">Documentation</a>
+            <a href="#" id="reportBug">Report Bug</a>
+            <a href="#" id="viewSource">Source Code</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="actions">
+        <button id="resetDefaults" class="btn btn-outline">
+          Reset to Defaults
+        </button>
+        <button id="saveSettings" class="btn btn-primary">
+          <span>Save Settings</span>
+        </button>
+      </div>
+
+      <!-- Save Status -->
+      <div id="saveStatus" class="save-status" style="display: none;"></div>
+    </main>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

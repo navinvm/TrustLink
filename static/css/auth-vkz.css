@@ -1,0 +1,229 @@
+/**
+ * VKZ Studio Authentication Pages
+ */
+
+.auth-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 480px;
+}
+
+.auth-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 24px !important;
+    padding: 3rem !important;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+}
+
+.auth-form {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.5rem;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    font-family: var(--font-body);
+    transition: all 0.3s;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: rgba(0, 217, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 4px rgba(0, 217, 255, 0.1);
+}
+
+.auth-form input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.auth-submit-btn {
+    width: 100%;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, var(--neon-blue), var(--electric-blue));
+    border: none;
+    border-radius: 12px;
+    color: var(--void-black);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 217, 255, 0.4);
+    margin-top: 0.5rem;
+}
+
+.auth-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 217, 255, 0.6);
+}
+
+.auth-submit-btn:active {
+    transform: translateY(0);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-footer p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    margin: 0.5rem 0;
+}
+
+.auth-footer a {
+    color: var(--neon-blue);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.auth-footer a:hover {
+    color: var(--neon-cyan);
+}
+
+.error-message,
+.success-message,
+.info-message {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    border-radius: 12px !important;
+    padding: 1rem 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    border-left: 3px solid var(--danger-red) !important;
+}
+
+.success-message {
+    border-left-color: var(--success-green) !important;
+    color: var(--success-green) !important;
+}
+
+.info-message {
+    border-left-color: var(--neon-blue) !important;
+    color: var(--neon-blue) !important;
+}
+
+.error-message i,
+.success-message i,
+.info-message i {
+    margin-right: 0.5rem;
+}
+
+.forgot-password-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.forgot-password-link a {
+    color: var(--neon-blue);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.3s;
+}
+
+.forgot-password-link a:hover {
+    color: var(--neon-cyan);
+}
+
+.password-requirements {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 12px !important;
+    margin-top: 1.5rem !important;
+    font-size: 0.875rem !important;
+}
+
+.password-requirements strong {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.password-requirements ul {
+    margin: 0.75rem 0 0 1.5rem !important;
+}
+
+.password-requirements li {
+    color: rgba(255, 255, 255, 0.7) !important;
+    line-height: 1.8;
+}
+
+/* Buttons in messages */
+button[type="button"] {
+    padding: 0.5rem 1rem;
+    background: var(--neon-blue);
+    color: var(--void-black);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+button[type="button"]:hover {
+    background: var(--neon-cyan);
+    transform: translateY(-1px);
+}
+
+button[type="button"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

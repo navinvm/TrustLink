@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scanner Test</title>
+</head>
+<body>
+    <h1>Scanner Test</h1>
+    <form id="testForm">
+        <input type="text" id="testInput" placeholder="Enter URL" value="https://google.com">
+        <button type="submit">Test Scan</button>
+    </form>
+    <div id="testResult"></div>
+    
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('testInput').value;
+            const resultDiv = document.getElementById('testResult');
+            
+            resultDiv.innerHTML = 'Scanning...';
+            
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                resultDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustLink - Phishing Protection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="popup-enhanced.css">
+  <link rel="stylesheet" href="extension-additions.css">
+  <link rel="stylesheet" href="popup-improvements.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <img src="icons/trustlink-logo-new.png" alt="TrustLink" class="logo-img">
+      </div>
+      <div class="status" id="status" title="Extension is actively protecting you">
+        <span class="status-indicator" id="statusIndicator"></span>
+        <span class="status-text" id="statusText">Protected</span>
+      </div>
+    </header>
+
+    <!-- Quick Stats -->
+    <div class="stats-container" id="statsContainer">
+      <div class="stat-card" title="Total URLs scanned by TrustLink">
+        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="stat-value" id="linksScanned">0</div>
+        <div class="stat-label">URLs Scanned</div>
+      </div>
+      <div class="stat-card" title="Phishing attempts prevented">
+        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-value" id="threatsBlocked">0</div>
+        <div class="stat-label">Threats Blocked</div>
+      </div>
+      <div class="stat-card" title="Cached results for faster scanning">
+        <div class="stat-icon"><i class="fas fa-database"></i></div>
+        <div class="stat-value" id="cacheSize">0</div>
+        <div class="stat-label">Cached</div>
+      </div>
+    </div>
+
+    <!-- Quick Scan Section -->
+    <div class="section">
+      <h2 class="section-title">Quick Scan</h2>
+      <div class="scan-form">
+        <input 
+          type="url" 
+          id="urlInput" 
+          class="url-input" 
+          placeholder="Paste URL here (Ctrl+V)..."
+          autocomplete="off"
+          autofocus
+        >
+        <button id="scanBtn" class="btn btn-primary" title="Click or press Enter to scan">
+          <i class="fas fa-search"></i>
+          <span class="btn-text">Scan</span>
+          <span class="btn-loader" id="scanLoader" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+      </div>
+      
+      <!-- Quick Actions Row -->
+      <div class="quick-actions-row">
+        <button id="scanCurrentPageQuick" class="quick-action-btn" title="Scan the page you're currently viewing">
+          <i class="fas fa-file-alt"></i>
+          <span>Scan This Page</span>
+        </button>
+        <button id="pasteAndScanBtn" class="quick-action-btn" title="Paste from clipboard and scan (Ctrl+Shift+V)">
+          <i class="fas fa-clipboard"></i>
+          <span>Paste & Scan</span>
+        </button>
+      </div>
+      
+      <!-- Scan Result -->
+      <div id="scanResult" class="scan-result" style="display: none;">
+        <!-- Status Shield -->
+        <div class="status-shield" id="statusShield">
+          <div class="shield-glow" id="shieldGlow"></div>
+          <div class="shield-icon" id="shieldIcon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="shield-verdict" id="shieldVerdict">Analyzing...</div>
+          <div class="shield-subtitle" id="shieldSubtitle">AI-powered threat detection</div>
+        </div>
+
+        <!-- Pattern Analysis Panel -->
+        <div class="pattern-panel glass-panel">
+          <h3 class="panel-title">
+            <i class="fas fa-chart-network"></i>
+            Pattern Analysis
+          </h3>
+          <div class="pattern-metrics">
+            <div class="metric-card">
+              <div class="metric-icon"><i class="fas fa-random"></i></div>
+              <div class="metric-content">
+                <div class="metric-label">URL Entropy</div>
+                <div class="metric-value" id="entropyValue">0.0</div>
+                <div class="metric-bar"><div class="metric-progress" id="entropyProgress"></div></div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon"><i class="fas fa-link"></i></div>
+              <div class="metric-content">
+                <div class="metric-label">URL Length</div>
+                <div class="metric-value" id="lengthValue">0</div>
+                <div class="metric-bar"><div class="metric-progress" id="lengthProgress"></div></div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon"><i class="fas fa-hashtag"></i></div>
+              <div class="metric-content">
+                <div class="metric-label">Special Chars</div>
+                <div class="metric-value" id="specialCharsValue">0</div>
+                <div class="metric-bar"><div class="metric-progress" id="specialCharsProgress"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confidence Score -->
+          <div class="confidence-section-glass">
+            <div class="confidence-header">
+              <span class="confidence-label-glass">AI Confidence Score</span>
+              <span id="confidenceValue" class="confidence-value-glass">0%</span>
+            </div>
+            <div class="confidence-bar-glass">
+              <div id="confidenceProgress" class="confidence-progress-glass"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zero-Day Alert Badge -->
+        <div class="zero-day-alert hidden" id="zeroDayAlert">
+          <div class="alert-glow"></div>
+          <i class="fas fa-exclamation-triangle"></i>
+          <div class="alert-content">
+            <strong>Zero-Day Detection</strong>
+            <span>Not found in standard blacklists</span>
+          </div>
+        </div>
+
+        <!-- Detailed Analysis -->
+        <div class="details-panel glass-panel">
+          <h4><i class="fas fa-clipboard-list"></i> Threat Intelligence</h4>
+          <div class="assessment-grid-glass">
+            <div class="assessment-item-glass">
+              <span class="assessment-label-glass">Status:</span>
+              <span id="statusBadge" class="status-badge-glass">Unknown</span>
+            </div>
+            <div class="assessment-item-glass">
+              <span class="assessment-label-glass">Risk Level:</span>
+              <span id="riskLevel" class="risk-badge-glass">Unknown</span>
+            </div>
+            <div class="assessment-item-glass">
+              <span class="assessment-label-glass">Threat Type:</span>
+              <span id="threatCategory" class="threat-category-badge">N/A</span>
+            </div>
+          </div>
+          <ul class="details-list-glass" id="detailsList"></ul>
+        </div>
+
+        <!-- Security Details Panel -->
+        <div class="details-panel glass-panel" id="securityDetailsPanel" style="display: none;">
+          <h4><i class="fas fa-lock"></i> Security Analysis</h4>
+          <div class="security-grid">
+            <div class="security-item">
+              <div class="security-icon" id="httpsIcon"><i class="fas fa-shield-alt"></i></div>
+              <div class="security-content">
+                <div class="security-label">HTTPS</div>
+                <div class="security-value" id="httpsStatus">Checking...</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon" id="sslIcon"><i class="fas fa-certificate"></i></div>
+              <div class="security-content">
+                <div class="security-label">SSL Certificate</div>
+                <div class="security-value" id="sslStatus">Checking...</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon" id="domainAgeIcon"><i class="fas fa-calendar-alt"></i></div>
+              <div class="security-content">
+                <div class="security-label">Domain Age</div>
+                <div class="security-value" id="domainAge">Checking...</div>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-icon" id="dnsIcon"><i class="fas fa-server"></i></div>
+              <div class="security-content">
+                <div class="security-label">DNS Records</div>
+                <div class="security-value" id="dnsStatus">Checking...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- URL Structure Panel -->
+        <div class="details-panel glass-panel" id="urlStructurePanel" style="display: none;">
+          <h4><i class="fas fa-link"></i> URL Analysis</h4>
+          <div class="url-info-grid">
+            <div class="url-info-item">
+              <span class="url-info-label">Protocol:</span>
+              <span class="url-info-value" id="urlProtocol">-</span>
+            </div>
+            <div class="url-info-item">
+              <span class="url-info-label">Domain:</span>
+              <span class="url-info-value" id="urlDomain">-</span>
+            </div>
+            <div class="url-info-item">
+              <span class="url-info-label">Subdomains:</span>
+              <span class="url-info-value" id="subdomainCount">-</span>
+            </div>
+            <div class="url-info-item">
+              <span class="url-info-label">Path Length:</span>
+              <span class="url-info-value" id="pathLength">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- External Verification Panel -->
+        <div class="details-panel glass-panel" id="externalVerificationPanel" style="display: none;">
+          <h4><i class="fas fa-shield-virus"></i> External Verification</h4>
+          <div class="verification-list">
+            <div class="verification-item" id="virusTotalItem">
+              <i class="fas fa-shield-virus"></i>
+              <span id="virusTotalStatus">VirusTotal: Checking...</span>
+            </div>
+            <div class="verification-item" id="safeBrowsingItem">
+              <i class="fab fa-google"></i>
+              <span id="safeBrowsingStatus">Google Safe Browsing: Checking...</span>
+            </div>
+            <div class="verification-item" id="phishTankItem">
+              <i class="fas fa-database"></i>
+              <span id="phishTankStatus">PhishTank: Checking...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn-secondary btn-small" onclick="document.getElementById('scanResult').style.display='none'; document.getElementById('urlInput').value='';">
+            <i class="fas fa-redo"></i> Scan Another
+          </button>
+          <button class="btn-primary btn-small" id="reportBtn">
+            <i class="fas fa-flag"></i> Report
+          </button>
+        </div>
+      </div>
+        
+        <div class="result-details">
+          <div class="result-row">
+            <span class="result-label">Confidence:</span>
+            <span class="result-value" id="resultConfidence"></span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Domain:</span>
+            <span class="result-value result-domain" id="resultDomain"></span>
+          </div>
+        </div>
+        
+        <!-- Why is this flagged? Dropdown -->
+        <div class="flagged-dropdown">
+          <button class="dropdown-toggle" id="flaggedToggle">
+            <i class="fas fa-info-circle"></i>
+            Why is this flagged?
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+          </button>
+          <div class="dropdown-content" id="flaggedContent" style="display: none;">
+            <div class="dropdown-header">Detection Reasons:</div>
+            <ul id="flaggedReasons" class="flagged-list">
+              <!-- Populated by JS -->
+            </ul>
+          </div>
+        </div>
+        
+        <button id="viewDetailsBtn" class="btn btn-secondary btn-sm">View Full Details</button>
+      </div>
+    </div>
+
+    <!-- Current Page Section -->
+    <div class="section current-page-section">
+      <h2 class="section-title">
+        <i class="fas fa-globe"></i>
+        Current Page Protection
+      </h2>
+      <div class="page-info-card">
+        <div class="page-url-container">
+          <div class="page-url-label">You're viewing:</div>
+          <div class="page-url" id="currentPageUrl">Loading...</div>
+        </div>
+        <div class="page-actions">
+          <button id="scanCurrentUrlBtn" class="btn btn-primary btn-sm" title="Scan just this URL">
+            <i class="fas fa-shield-alt"></i>
+            <span class="btn-text">Scan URL</span>
+            <span class="btn-loader" id="currentUrlLoader" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+          </button>
+          <button id="scanPageBtn" class="btn btn-secondary btn-sm" title="Scan all links on this page">
+            <i class="fas fa-link"></i>
+            <span class="btn-text">Scan All Links</span>
+            <span class="btn-loader" id="pageLoader" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+          </button>
+        </div>
+      </div>
+      <div id="pageStats" class="page-stats" style="display: none;">
+        <div class="page-stat">
+          <i class="fas fa-link"></i>
+          <span class="page-stat-label">Total Links:</span>
+          <span class="page-stat-value" id="totalLinks">0</span>
+        </div>
+        <div class="page-stat page-stat-safe">
+          <i class="fas fa-check-circle"></i>
+          <span class="page-stat-label">Safe:</span>
+          <span class="page-stat-value" id="safeLinks">0</span>
+        </div>
+        <div class="page-stat page-stat-danger">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span class="page-stat-label">Threats:</span>
+          <span class="page-stat-value" id="threatsFound">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safe Mode Toggle -->
+    <div class="safe-mode-section section">
+      <div class="safe-mode-toggle">
+        <div class="toggle-info">
+          <strong><i class="fas fa-shield-virus"></i> Safe Mode</strong>
+          <small>Automatically block suspicious sites before they load</small>
+        </div>
+        <label class="switch" title="Toggle automatic blocking">
+          <input type="checkbox" id="safeModeToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div id="safeModeControls" style="display: none; margin-top: 12px;">
+        <div class="safe-mode-strength">
+          <label style="font-size: 12px; color: #b8b9d4; margin-bottom: 6px; display: block;">
+            <i class="fas fa-sliders-h"></i> Protection Level:
+          </label>
+          <select id="safeModeStrength" class="safe-mode-select">
+            <option value="low">Low - Block only high-risk threats</option>
+            <option value="medium" selected>Medium - Block high and some medium-risk</option>
+            <option value="high">High - Block all detected threats</option>
+          </select>
+        </div>
+        
+        <div id="safeModeStatus" class="safe-mode-status" style="margin-top: 10px; padding: 10px; background: rgba(91, 156, 245, 0.1); border-radius: 6px; font-size: 12px; color: var(--neon-blue);">
+          <i class="fas fa-shield-check"></i> 
+          <span id="safeModeStatusText">Safe Mode Active - Dangerous links will be automatically blocked</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions">
+      <button id="viewDashboardBtn" class="btn btn-outline" title="Open TrustLink dashboard">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </button>
+      <button id="clearCacheBtn" class="btn btn-outline" title="Clear cached scan results">
+        <i class="fas fa-trash-alt"></i>
+        <span>Clear Cache</span>
+      </button>
+      <button id="optionsBtn" class="btn btn-outline" title="Open extension settings">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#" id="viewHistoryLink" title="View scan history"><i class="fas fa-history"></i> History</a>
+        <span class="separator">•</span>
+        <a href="#" id="reportIssueLink" title="Report a problem"><i class="fas fa-bug"></i> Report</a>
+        <span class="separator">•</span>
+        <a href="#" id="helpLink" title="Get help"><i class="fas fa-question-circle"></i> Help</a>
+      </div>
+      <div class="version" title="TrustLink Extension Version">
+        <i class="fas fa-code-branch"></i> v2.0.0
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+  <script src="popup-enhanced.js"></script>
+</body>
+</html>

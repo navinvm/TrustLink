@@ -1,0 +1,567 @@
+{% extends "base.html" %}
+
+{% block title %}About TrustLink - AI-Powered Phishing Protection{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/text-animations.css') }}">
+<style>
+    .about-hero {
+        text-align: center;
+        padding: 4rem 0 3rem;
+        background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+        border-radius: 20px;
+        margin-bottom: 3rem;
+    }
+
+    .about-hero h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #00D2FF 0%, #9333EA 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .about-hero p {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+        color: var(--accent-cyan);
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, #00D2FF, #9333EA);
+        border-radius: 2px;
+    }
+
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .tech-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(0, 210, 255, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 210, 255, 0.5);
+        box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
+    }
+
+    .tech-card .icon {
+        font-size: 3rem;
+        color: var(--accent-cyan);
+        margin-bottom: 1rem;
+    }
+
+    .tech-card h3 {
+        font-size: 1.5rem;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+
+    .tech-card p {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+
+    .tech-card ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+
+    .tech-card ul li {
+        padding: 0.5rem 0;
+        color: rgba(255, 255, 255, 0.7);
+        position: relative;
+        padding-left: 1.5rem;
+    }
+
+    .tech-card ul li::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: var(--accent-cyan);
+    }
+
+    .process-timeline {
+        position: relative;
+        padding: 2rem 0;
+        margin-bottom: 4rem;
+    }
+
+    .process-timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #00D2FF, #9333EA);
+        transform: translateX(-50%);
+    }
+
+    .process-step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .process-step:nth-child(odd) {
+        flex-direction: row;
+    }
+
+    .process-step:nth-child(even) {
+        flex-direction: row-reverse;
+    }
+
+    .process-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #00D2FF, #9333EA);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        position: relative;
+        z-index: 2;
+        flex-shrink: 0;
+    }
+
+    .process-content {
+        flex: 1;
+        padding: 0 3rem;
+        max-width: calc(50% - 30px);
+    }
+
+    .process-content h3 {
+        font-size: 1.5rem;
+        color: var(--accent-cyan);
+        margin-bottom: 0.5rem;
+    }
+
+    .process-content p {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+
+    .data-privacy {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .data-privacy h3 {
+        color: #10b981;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .data-privacy p {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .privacy-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .privacy-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .privacy-item i {
+        color: #10b981;
+        font-size: 1.2rem;
+    }
+
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+        text-align: center;
+    }
+
+    .stat-box {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 2rem;
+        border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+
+    .stat-box .number {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #00D2FF, #9333EA);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-box .label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 2rem;
+        }
+
+        .process-timeline::before {
+            left: 30px;
+        }
+
+        .process-step {
+            flex-direction: column !important;
+            padding-left: 80px;
+        }
+
+        .process-number {
+            position: absolute;
+            left: 0;
+        }
+
+        .process-content {
+            max-width: 100%;
+            padding: 1rem 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
+    
+    <!-- Hero Section -->
+    <div class="about-hero">
+        <img src="{{ url_for('static', filename='images/img.png') }}" alt="TrustLink Logo" style="width: 120px; margin-bottom: 1.5rem;" class="scale-in-center">
+        <h1 class="fade-in-down stagger-1">About TrustLink</h1>
+        <p class="fade-in-up stagger-2">
+            TrustLink is an intelligent phishing detection platform that leverages advanced machine learning 
+            algorithms to identify and prevent malicious URLs in real-time. Built with precision and security 
+            in mind, TrustLink analyzes URL patterns, domain reputation, SSL certificates, and behavioral 
+            indicators to provide instant threat assessment and protect users from cyber attacks.
+        </p>
+        <p class="fade-in-up stagger-3" style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.8;">
+            <strong>Made by Ivan Lagura</strong>
+        </p>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stat-box bounce-in stagger-1">
+            <div class="number count-up">99%+</div>
+            <div class="label">Detection Accuracy</div>
+        </div>
+        <div class="stat-box bounce-in stagger-2">
+            <div class="number count-up">~4s</div>
+            <div class="label">Avg Scan Time</div>
+        </div>
+        <div class="stat-box bounce-in stagger-3">
+            <div class="number count-up">85K+</div>
+            <div class="label">Training URLs</div>
+        </div>
+        <div class="stat-box bounce-in stagger-4">
+            <div class="number count-up">24/7</div>
+            <div class="label">Protection</div>
+        </div>
+    </div>
+
+    <!-- Technology Stack -->
+    <h2 class="section-title fade-in-up">Technology Stack</h2>
+    <div class="tech-grid">
+        <div class="tech-card fade-in-up stagger-1 hover-lift">
+            <div class="icon"><i class="fab fa-python"></i></div>
+            <h3>Python & Flask</h3>
+            <p>
+                Built with Python 3 and Flask framework for robust, scalable backend processing. 
+                Flask provides a lightweight, flexible foundation for our API endpoints and web interface.
+            </p>
+            <ul>
+                <li>RESTful API architecture</li>
+                <li>Async request handling</li>
+                <li>Production-ready deployment</li>
+            </ul>
+        </div>
+
+        <div class="tech-card fade-in-up stagger-2 hover-lift">
+            <div class="icon"><i class="fas fa-brain"></i></div>
+            <h3>Machine Learning</h3>
+            <p>
+                Powered by Scikit-learn's advanced algorithms, our ML model analyzes URL patterns 
+                to detect phishing attempts with 99%+ accuracy.
+            </p>
+            <ul>
+                <li>Trained on 85K+ URLs</li>
+                <li>Pattern recognition engine</li>
+                <li>Continuous learning system</li>
+            </ul>
+        </div>
+
+        <div class="tech-card fade-in-up stagger-3 hover-lift">
+            <div class="icon"><i class="fas fa-database"></i></div>
+            <h3>SQLite Database</h3>
+            <p>
+                Efficient SQLite database for storing scan history, user data, and analytics 
+                with connection pooling for optimal performance.
+            </p>
+            <ul>
+                <li>Secure data storage</li>
+                <li>Fast query processing</li>
+                <li>Automatic backups</li>
+            </ul>
+        </div>
+
+        <div class="tech-card fade-in-up stagger-4 hover-lift">
+            <div class="icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>Security Features</h3>
+            <p>
+                Enterprise-grade security with CSRF protection, input validation, 
+                rate limiting, and secure session management.
+            </p>
+            <ul>
+                <li>CSRF token protection</li>
+                <li>Input sanitization</li>
+                <li>Rate limiting (1000/hour)</li>
+            </ul>
+        </div>
+
+        <div class="tech-card fade-in-up stagger-5 hover-lift">
+            <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
+            <h3>Performance</h3>
+            <p>
+                Optimized for speed with Redis caching, connection pooling, 
+                and CDN support for lightning-fast response times.
+            </p>
+            <ul>
+                <li>Redis caching layer</li>
+                <li>Database connection pooling</li>
+                <li>Real-time processing</li>
+            </ul>
+        </div>
+
+        <div class="tech-card fade-in-up stagger-6 hover-lift">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Analytics & Monitoring</h3>
+            <p>
+                Comprehensive monitoring with health checks, metrics collection, 
+                and real-time performance tracking.
+            </p>
+            <ul>
+                <li>Health check endpoints</li>
+                <li>Metrics collection</li>
+                <li>Performance monitoring</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- How Data is Processed -->
+    <h2 class="section-title fade-in-up">How Data is Processed</h2>
+    <div class="process-timeline">
+        <div class="process-step slide-in-left stagger-1">
+            <div class="process-number">1</div>
+            <div class="process-content">
+                <h3>URL Submission</h3>
+                <p>
+                    When you submit a URL, it's first validated and sanitized to prevent injection attacks. 
+                    We check the URL format, length (max 2048 chars), and ensure it contains valid characters.
+                </p>
+            </div>
+        </div>
+
+        <div class="process-step slide-in-right stagger-2">
+            <div class="process-number">2</div>
+            <div class="process-content">
+                <h3>Feature Extraction</h3>
+                <p>
+                    Our advanced feature extractor analyzes 50+ characteristics including URL length, 
+                    special character frequency, domain age, SSL certificate validity, subdomain count, 
+                    and suspicious keyword detection.
+                </p>
+            </div>
+        </div>
+
+        <div class="process-step slide-in-left stagger-3">
+            <div class="process-number">3</div>
+            <div class="process-content">
+                <h3>Whitelist Check</h3>
+                <p>
+                    Before ML analysis, we check against our whitelist of 300+ verified legitimate domains 
+                    (Google, Facebook, Microsoft, etc.). Whitelisted domains are instantly marked as safe.
+                </p>
+            </div>
+        </div>
+
+        <div class="process-step slide-in-right stagger-4">
+            <div class="process-number">4</div>
+            <div class="process-content">
+                <h3>ML Model Analysis</h3>
+                <p>
+                    The extracted features are passed through our trained Scikit-learn model which uses 
+                    pattern recognition to classify the URL. The model outputs a prediction (Safe/Phishing) 
+                    and confidence score (0-100%).
+                </p>
+            </div>
+        </div>
+
+        <div class="process-step slide-in-left stagger-5">
+            <div class="process-number">5</div>
+            <div class="process-content">
+                <h3>External Verification (Optional)</h3>
+                <p>
+                    For enhanced accuracy, we cross-reference with external APIs like Google Safe Browsing 
+                    and VirusTotal. This multi-source validation increases confidence from 60% to 95%+ when sources agree.
+                </p>
+            </div>
+        </div>
+
+        <div class="process-step slide-in-right stagger-6">
+            <div class="process-number">6</div>
+            <div class="process-content">
+                <h3>Risk Assessment</h3>
+                <p>
+                    We analyze risk factors (new domain, no HTTPS, suspicious TLD) and trust factors 
+                    (established domain, valid SSL, legitimate registrar) to calculate a final risk level: 
+                    Low, Medium, or High.
+                </p>
+            </div>
+        </div>
+
+        <div class="process-step slide-in-left stagger-7">
+            <div class="process-number">7</div>
+            <div class="process-content">
+                <h3>Results & Caching</h3>
+                <p>
+                    Results are displayed instantly with detailed analysis. For registered users, scans are 
+                    saved to history. Results are cached for 24 hours to speed up repeated scans of the same URL.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Privacy & Security -->
+    <div class="data-privacy">
+        <h3><i class="fas fa-lock"></i> Your Privacy & Data Security</h3>
+        <p>
+            We take your privacy seriously. Here's how we handle your data:
+        </p>
+        <div class="privacy-list">
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>URLs are not stored for anonymous users</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Scan history saved only for registered users</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Passwords encrypted with bcrypt hashing</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Secure HTTPS connections enforced</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>No third-party data sharing</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>API keys are hashed and secured</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Sessions expire after inactivity</span>
+            </div>
+            <div class="privacy-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Rate limiting prevents abuse</span>
+            </div>
+        </div>
+        <p style="margin-top: 1.5rem;">
+            <strong>Data Retention:</strong> Scan history is retained for registered users until account deletion. 
+            Anonymous scans are processed in real-time and immediately discarded. Cache data expires after 24 hours.
+        </p>
+    </div>
+
+    <!-- Open Source & Contributing -->
+    <h2 class="section-title">Open Source & Transparency</h2>
+    <div class="tech-card" style="max-width: 800px; margin: 0 auto 4rem;">
+        <div class="icon"><i class="fab fa-github"></i></div>
+        <h3>Built with Transparency</h3>
+        <p>
+            TrustLink is committed to transparency in cybersecurity. Our machine learning model is trained 
+            on publicly available datasets from Kaggle and academic research. While our core code is proprietary, 
+            we believe in open collaboration and welcome security researchers to help improve our detection capabilities.
+        </p>
+        <p style="margin-top: 1rem;">
+            <strong>Training Data Sources:</strong>
+        </p>
+        <ul>
+            <li>Kaggle Phishing Dataset (~45K URLs)</li>
+            <li>PhishTank Community Database (~25K URLs)</li>
+            <li>Academic Research Datasets (~15K URLs)</li>
+            <li>User feedback and continuous learning</li>
+        </ul>
+    </div>
+
+    <!-- Call to Action -->
+    <div style="text-align: center; padding: 3rem 0;">
+        <h2 style="color: var(--accent-cyan); margin-bottom: 1rem;">Ready to Protect Yourself?</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-size: 1.1rem;">
+            Start scanning URLs now or create an account for advanced features and scan history.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('scanner') }}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                <i class="fas fa-search"></i> Try Scanner Now
+            </a>
+            {% if not user %}
+            <a href="{{ url_for('register') }}" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem; background: rgba(255, 255, 255, 0.1);">
+                <i class="fas fa-user-plus"></i> Create Free Account
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

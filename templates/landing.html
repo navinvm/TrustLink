@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}TrustLink - AI-Powered Phishing Detection{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" style="padding: 80px 20px; text-align: center; position: relative; overflow: hidden;">
+    <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
+        
+        <!-- Main Headline -->
+        <div class="hero-content animate-fade-in" style="margin-bottom: 60px;">
+            <div class="hero-badge" style="display: inline-block; background: rgba(0, 210, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.3); padding: 8px 20px; border-radius: 20px; margin-bottom: 24px; font-size: 0.9rem; color: #00D2FF;">
+                <i class="fas fa-shield-alt"></i> AI-Powered Phishing Protection
+            </div>
+            <h1 class="hero-title" style="font-size: 3.8rem; font-weight: 900; margin-bottom: 24px; line-height: 1.2;">
+                <span style="background: linear-gradient(135deg, #00D2FF 0%, #667eea 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Stop Phishing</span><br>
+                <span style="color: white;">Before It Starts</span>
+            </h1>
+            <p class="hero-description" style="font-size: 1.4rem; color: var(--text-secondary); max-width: 750px; margin: 0 auto 40px; line-height: 1.8;">
+                Don't fall victim to malicious links. TrustLink's intelligent AI scans URLs in real-time, identifying threats with 99% accuracy so you can browse with confidence.
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('register') }}" class="btn-hero" style="padding: 18px 40px; background: linear-gradient(135deg, #00D2FF 0%, #0099ff 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4); transition: all 0.3s;">
+                    <i class="fas fa-user-plus"></i> Get Started Free
+                </a>
+                <a href="{{ url_for('scanner') }}" class="btn-secondary" style="padding: 18px 40px; background: rgba(255, 255, 255, 0.1); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; border: 2px solid rgba(0, 210, 255, 0.3); transition: all 0.3s;">
+                    <i class="fas fa-search"></i> Try Scanner
+                </a>
+            </div>
+        </div>
+
+        <!-- Feature Highlights -->
+        <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 60px;">
+            <div class="feature-card feature-card-1" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2);">
+                <div class="feature-icon" style="font-size: 48px; margin-bottom: 16px;">🤖</div>
+                <h3 style="color: #00D2FF; margin-bottom: 12px; font-size: 1.3rem;">AI-Powered Detection</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Advanced machine learning algorithms analyze URL patterns to identify threats</p>
+            </div>
+            <div class="feature-card feature-card-2" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2);">
+                <div class="feature-icon" style="font-size: 48px; margin-bottom: 16px;">⚡</div>
+                <h3 style="color: #00D2FF; margin-bottom: 12px; font-size: 1.3rem;">Fast & Accurate</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Get instant results with high confidence scores for every URL you check</p>
+            </div>
+            <div class="feature-card feature-card-3" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2);">
+                <div class="feature-icon" style="font-size: 48px; margin-bottom: 16px;">🌐</div>
+                <h3 style="color: #00D2FF; margin-bottom: 12px; font-size: 1.3rem;">Browser Extension</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Protect yourself while browsing with our Chrome extension</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" style="padding: 80px 20px; background: rgba(255, 255, 255, 0.02);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #00D2FF;">
+            How TrustLink Works
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+            <!-- Step 1 -->
+            <div style="text-align: center;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #00D2FF 0%, #0099ff 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2rem; font-weight: 900; box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);">1</div>
+                <h3 style="color: white; margin-bottom: 16px; font-size: 1.5rem;">Enter URL</h3>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Paste any suspicious URL into our scanner or use our browser extension</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div style="text-align: center;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #00D2FF 0%, #0099ff 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2rem; font-weight: 900; box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);">2</div>
+                <h3 style="color: white; margin-bottom: 16px; font-size: 1.5rem;">AI Analysis</h3>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Our AI examines URL structure, domain patterns, and threat indicators</p>
+            </div>
+            
+            <!-- Step 3 -->
+            <div style="text-align: center;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #00D2FF 0%, #0099ff 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2rem; font-weight: 900; box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);">3</div>
+                <h3 style="color: white; margin-bottom: 16px; font-size: 1.5rem;">Get Results</h3>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Receive instant verdict with confidence score and safety recommendations</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section style="padding: 80px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #00D2FF;">
+            Powerful Features
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 32px;">
+            
+            <!-- Feature 1 -->
+            <div class="feature-box" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2); transition: all 0.3s;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-chart-line" style="font-size: 2.5rem; color: #00D2FF;"></i>
+                    <h3 style="color: white; font-size: 1.4rem; margin: 0;">Analytics Dashboard</h3>
+                </div>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Track your scan history, view statistics, and monitor threats with our comprehensive dashboard</p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="feature-box" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2); transition: all 0.3s;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: #00D2FF;"></i>
+                    <h3 style="color: white; font-size: 1.4rem; margin: 0;">Whitelist Management</h3>
+                </div>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Create custom whitelists for trusted domains and manage your safe browsing experience</p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="feature-box" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2); transition: all 0.3s;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-key" style="font-size: 2.5rem; color: #00D2FF;"></i>
+                    <h3 style="color: white; font-size: 1.4rem; margin: 0;">API Access</h3>
+                </div>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Integrate TrustLink into your applications with our RESTful API and secure API keys</p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="feature-box" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2); transition: all 0.3s;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-brain" style="font-size: 2.5rem; color: #00D2FF;"></i>
+                    <h3 style="color: white; font-size: 1.4rem; margin: 0;">Continuous Learning</h3>
+                </div>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Our ML model continuously improves with user feedback to detect new phishing patterns</p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="feature-box" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2); transition: all 0.3s;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-history" style="font-size: 2.5rem; color: #00D2FF;"></i>
+                    <h3 style="color: white; font-size: 1.4rem; margin: 0;">Scan History</h3>
+                </div>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Access your complete scan history and review past detections anytime</p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="feature-box" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.2); transition: all 0.3s;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-puzzle-piece" style="font-size: 2.5rem; color: #00D2FF;"></i>
+                    <h3 style="color: white; font-size: 1.4rem; margin: 0;">Browser Extension</h3>
+                </div>
+                <p style="color: var(--text-secondary); line-height: 1.8;">Install our Chrome extension for automatic protection while browsing the web</p>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<!-- Why TrustLink Section -->
+<section style="padding: 80px 20px; background: rgba(255, 255, 255, 0.02);">
+    <div style="max-width: 1000px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 32px; color: #00D2FF;">
+            Why Choose TrustLink?
+        </h2>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 48px;">
+            Phishing attacks are becoming more sophisticated every day. TrustLink provides you with an intelligent shield against these threats, using cutting-edge AI to keep you safe online.
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; margin-top: 48px;">
+            <div>
+                <div style="font-size: 3rem; color: #39FF14; font-weight: 900; margin-bottom: 8px;">99%</div>
+                <p style="color: var(--text-secondary);">Detection Accuracy</p>
+            </div>
+            <div>
+                <div style="font-size: 3rem; color: #00D2FF; font-weight: 900; margin-bottom: 8px;">24/7</div>
+                <p style="color: var(--text-secondary);">Always Available</p>
+            </div>
+            <div>
+                <div style="font-size: 3rem; color: #ff9500; font-weight: 900; margin-bottom: 8px;">Free</div>
+                <p style="color: var(--text-secondary);">No Cost to Start</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section style="padding: 80px 20px;">
+    <div style="max-width: 800px; margin: 0 auto; text-align: center; background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%); padding: 60px 40px; border-radius: 24px; border: 2px solid rgba(0, 210, 255, 0.3);">
+        <h2 style="font-size: 2.5rem; margin-bottom: 24px; color: white;">
+            Ready to Stay Safe Online?
+        </h2>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 40px; line-height: 1.8;">
+            Join thousands of users protecting themselves from phishing attacks with TrustLink.
+        </p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('register') }}" class="btn-cta" style="padding: 18px 48px; background: linear-gradient(135deg, #00D2FF 0%, #0099ff 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.2rem; box-shadow: 0 8px 24px rgba(0, 210, 255, 0.5); transition: all 0.3s;">
+                <i class="fas fa-rocket"></i> Get Started Now
+            </a>
+            <a href="{{ url_for('scanner') }}" class="btn-outline" style="padding: 18px 48px; background: transparent; color: #00D2FF; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.2rem; border: 2px solid #00D2FF; transition: all 0.3s;">
+                <i class="fas fa-search"></i> Try Scanner
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Enhanced Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 32px rgba(0, 210, 255, 0.6);
+    }
+}
+
+/* Apply animations */
+.hero-section {
+    animation: fadeIn 0.8s ease-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-out;
+}
+
+.hero-badge {
+    animation: slideInLeft 0.6s ease-out 0.2s both;
+}
+
+.hero-title {
+    animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.hero-description {
+    animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+.btn-hero, .btn-secondary {
+    animation: scaleIn 0.5s ease-out 0.8s both;
+}
+
+.btn-hero {
+    animation: scaleIn 0.5s ease-out 0.9s both, glow 2s ease-in-out infinite;
+}
+
+/* Feature Cards Animations */
+.feature-card {
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.feature-card-1 {
+    animation: slideInLeft 0.6s ease-out 1.2s both;
+}
+
+.feature-card-2 {
+    animation: fadeIn 0.6s ease-out 1.4s both;
+}
+
+.feature-card-3 {
+    animation: slideInRight 0.6s ease-out 1.6s both;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 210, 255, 0.3);
+    border-color: rgba(0, 210, 255, 0.5);
+}
+
+.feature-icon {
+    animation: float 3s ease-in-out infinite;
+    display: inline-block;
+}
+
+/* Feature Boxes with Stagger Animation */
+.feature-box {
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.feature-box:nth-child(1) { animation: fadeIn 0.6s ease-out 0.2s both; }
+.feature-box:nth-child(2) { animation: fadeIn 0.6s ease-out 0.4s both; }
+.feature-box:nth-child(3) { animation: fadeIn 0.6s ease-out 0.6s both; }
+.feature-box:nth-child(4) { animation: fadeIn 0.6s ease-out 0.8s both; }
+.feature-box:nth-child(5) { animation: fadeIn 0.6s ease-out 1.0s both; }
+.feature-box:nth-child(6) { animation: fadeIn 0.6s ease-out 1.2s both; }
+
+.feature-box:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 210, 255, 0.2);
+    border-color: rgba(0, 210, 255, 0.4);
+}
+
+.btn-hero:hover, .btn-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 210, 255, 0.6);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(0, 210, 255, 0.5);
+}
+
+.btn-outline:hover {
+    background: rgba(0, 210, 255, 0.1);
+}
+</style>
+{% endblock %}

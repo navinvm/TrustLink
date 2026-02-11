@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+
+{% block title %}Whitelist Management - TrustLink{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-animations.css') }}">
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>🔒 Whitelist Management</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDomainModal">
+                    <i class="bi bi-plus-circle"></i> Add Domain
+                </button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Domains</h5>
+                            <h2 id="stat-total">-</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Exact Domains</h5>
+                            <h2 id="stat-exact">-</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Root Patterns</h5>
+                            <h2 id="stat-patterns">-</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Categories</h5>
+                            <h2 id="stat-categories">-</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search domains...">
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filterCategory" class="form-select">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domains Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Whitelisted Domains</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="domainsTable">
+                            <thead>
+                                <tr>
+                                    <th>Domain</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Pattern</th>
+                                    <th>Added</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="domainsTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Domain Modal -->
+<div class="modal fade" id="addDomainModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Domain to Whitelist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addDomainForm">
+                    <div class="mb-3">
+                        <label for="domainInput" class="form-label">Domain *</label>
+                        <input type="text" class="form-control" id="domainInput" required
+                               placeholder="example.com or www.example.com">
+                        <small class="form-text text-muted">Enter exact domain or root pattern (e.g., example.)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryInput" class="form-label">Category</label>
+                        <select class="form-select" id="categoryInput">
+                            <option value="">Select a category</option>
+                            <option value="banking">Banking</option>
+                            <option value="ecommerce">E-commerce</option>
+                            <option value="education">Education</option>
+                            <option value="government">Government</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="social">Social Media</option>
+                            <option value="tech">Technology</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descriptionInput" class="form-label">Description</label>
+                        <textarea class="form-control" id="descriptionInput" rows="2"
+                                  placeholder="Optional description"></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isRootPatternInput">
+                        <label class="form-check-label" for="isRootPatternInput">
+                            Is Root Pattern (matches subdomains)
+                        </label>
+                        <small class="form-text text-muted d-block">
+                            If checked, will match all subdomains (e.g., google. matches mail.google.com)
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addDomain()">Add Domain</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Domain Modal -->
+<div class="modal fade" id="editDomainModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Domain</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDomainForm">
+                    <input type="hidden" id="editDomainId">
+                    <div class="mb-3">
+                        <label for="editDomainInput" class="form-label">Domain *</label>
+                        <input type="text" class="form-control" id="editDomainInput" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCategoryInput" class="form-label">Category</label>
+                        <select class="form-select" id="editCategoryInput">
+                            <option value="">Select a category</option>
+                            <option value="banking">Banking</option>
+                            <option value="ecommerce">E-commerce</option>
+                            <option value="education">Education</option>
+                            <option value="government">Government</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="social">Social Media</option>
+                            <option value="tech">Technology</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescriptionInput" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescriptionInput" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="editIsRootPatternInput">
+                        <label class="form-check-label" for="editIsRootPatternInput">
+                            Is Root Pattern
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateDomain()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allDomains = [];
+let currentFilter = '';
+
+// Load whitelist on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadWhitelist();
+    
+    // Setup search
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        filterDomains(e.target.value, currentFilter);
+    });
+    
+    // Setup category filter
+    document.getElementById('filterCategory').addEventListener('change', function(e) {
+        currentFilter = e.target.value;
+        filterDomains(document.getElementById('searchInput').value, currentFilter);
+    });
+});
+
+function loadWhitelist() {
+    fetch('/api/v1/whitelist')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                allDomains = data.domains;
+                displayDomains(allDomains);
+                updateStats(data.stats);
+                populateCategoryFilter(data.stats.by_category);
+            } else {
+                showAlert('Failed to load whitelist: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            showAlert('Error loading whitelist: ' + error, 'danger');
+        });
+}
+
+function displayDomains(domains) {
+    const tbody = document.getElementById('domainsTableBody');
+    
+    if (domains.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No domains found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = domains.map(domain => `
+        <tr>
+            <td><strong>${domain.domain}</strong></td>
+            <td><span class="badge bg-secondary">${domain.domain_type}</span></td>
+            <td>${domain.category || '-'}</td>
+            <td>${domain.description || '-'}</td>
+            <td>${domain.is_root_pattern ? '<span class="badge bg-info">Root Pattern</span>' : '<span class="badge bg-success">Exact</span>'}</td>
+            <td>${new Date(domain.added_at).toLocaleDateString()}</td>
+            <td>
+                <button class="btn btn-sm btn-primary" onclick="editDomain(${domain.id})">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDomain(${domain.id}, '${domain.domain}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateStats(stats) {
+    document.getElementById('stat-total').textContent = stats.total;
+    document.getElementById('stat-exact').textContent = stats.exact_domains;
+    document.getElementById('stat-patterns').textContent = stats.root_patterns;
+    document.getElementById('stat-categories').textContent = stats.by_category.length;
+}
+
+function populateCategoryFilter(categories) {
+    const select = document.getElementById('filterCategory');
+    const currentOptions = '<option value="">All Categories</option>';
+    const categoryOptions = categories.map(cat => 
+        `<option value="${cat.category}">${cat.category} (${cat.count})</option>`
+    ).join('');
+    select.innerHTML = currentOptions + categoryOptions;
+}
+
+function filterDomains(searchTerm, category) {
+    let filtered = allDomains;
+    
+    if (searchTerm) {
+        filtered = filtered.filter(domain => 
+            domain.domain.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (domain.description && domain.description.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+    }
+    
+    if (category) {
+        filtered = filtered.filter(domain => domain.category === category);
+    }
+    
+    displayDomains(filtered);
+}
+
+function addDomain() {
+    const domain = document.getElementById('domainInput').value.trim().toLowerCase();
+    const category = document.getElementById('categoryInput').value;
+    const description = document.getElementById('descriptionInput').value.trim();
+    const isRootPattern = document.getElementById('isRootPatternInput').checked;
+    
+    if (!domain) {
+        showAlert('Domain is required', 'warning');
+        return;
+    }
+    
+    fetch('/api/v1/whitelist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            domain: domain,
+            domain_type: 'custom',
+            category: category || null,
+            description: description || null,
+            is_root_pattern: isRootPattern
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showAlert('Domain added successfully!', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('addDomainModal')).hide();
+            document.getElementById('addDomainForm').reset();
+            loadWhitelist();
+        } else {
+            showAlert('Failed to add domain: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Error adding domain: ' + error, 'danger');
+    });
+}
+
+function editDomain(id) {
+    fetch(`/api/v1/whitelist/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const domain = data.domain;
+                document.getElementById('editDomainId').value = domain.id;
+                document.getElementById('editDomainInput').value = domain.domain;
+                document.getElementById('editCategoryInput').value = domain.category || '';
+                document.getElementById('editDescriptionInput').value = domain.description || '';
+                document.getElementById('editIsRootPatternInput').checked = domain.is_root_pattern;
+                
+                new bootstrap.Modal(document.getElementById('editDomainModal')).show();
+            } else {
+                showAlert('Failed to load domain: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            showAlert('Error loading domain: ' + error, 'danger');
+        });
+}
+
+function updateDomain() {
+    const id = document.getElementById('editDomainId').value;
+    const domain = document.getElementById('editDomainInput').value.trim().toLowerCase();
+    const category = document.getElementById('editCategoryInput').value;
+    const description = document.getElementById('editDescriptionInput').value.trim();
+    const isRootPattern = document.getElementById('editIsRootPatternInput').checked;
+    
+    fetch(`/api/v1/whitelist/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            domain: domain,
+            category: category || null,
+            description: description || null,
+            is_root_pattern: isRootPattern
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showAlert('Domain updated successfully!', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('editDomainModal')).hide();
+            loadWhitelist();
+        } else {
+            showAlert('Failed to update domain: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Error updating domain: ' + error, 'danger');
+    });
+}
+
+function deleteDomain(id, domain) {
+    if (!confirm(`Are you sure you want to remove "${domain}" from the whitelist?`)) {
+        return;
+    }
+    
+    fetch(`/api/v1/whitelist/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showAlert('Domain removed successfully!', 'success');
+            loadWhitelist();
+        } else {
+            showAlert('Failed to remove domain: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Error removing domain: ' + error, 'danger');
+    });
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+    alertDiv.style.zIndex = '9999';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+</script>
+
+<style>
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
+
+.badge {
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

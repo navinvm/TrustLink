@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}TrustLink - AI Phishing Scanner{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/text-animations.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vkz-theme.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- VKZ Hero Section -->
+<section class="vkz-hero">
+    <div class="vkz-hero-content">
+        
+        <!-- Badge -->
+        <div class="vkz-badge">
+            <i class="fas fa-shield-alt"></i> AI-Powered Threat Intelligence
+        </div>
+        
+        <!-- Title -->
+        <h1 class="vkz-title">
+            Scan. <span class="gradient-text">Detect.</span><br>Stay Safe.
+        </h1>
+        
+        <!-- Subtitle -->
+        <p class="vkz-subtitle">
+            Advanced neural network analyzes URLs at lightning speed, identifying phishing attempts with 99% accuracy before you click.
+        </p>
+        
+        <!-- Scanner - The Centerpiece -->
+        <div class="vkz-scanner">
+            <form id="scanForm" class="vkz-search-container">
+                <div class="vkz-search-wrapper">
+                    <i class="fas fa-link vkz-search-icon"></i>
+                    <input 
+                        type="url" 
+                        id="urlInput" 
+                        class="vkz-input" 
+                        placeholder="Paste suspicious link here..."
+                        required
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <button type="submit" class="vkz-scan-btn" id="scanBtn">
+                        <i class="fas fa-search"></i> Analyze
+                    </button>
+                </div>
+                <div class="scanning-beam" id="scanningBeam"></div>
+            </form>
+            
+            <!-- Quick Stats Below Scanner -->
+            <div class="vkz-stats" style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; opacity: 0.6;">
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-blue);">{{ model_accuracy }}</div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; text-transform: uppercase;">Accuracy</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-blue);">24/7</div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; text-transform: uppercase;">Protection</div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<!-- Results Section (Initially Hidden) - VKZ Studio Premium Dashboard -->
+<div id="resultsSection" style="display: none; position: relative; z-index: 10; padding: 4rem 2rem; min-height: 100vh;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        
+        <!-- Asymmetric Grid Layout -->
+        <div class="vkz-dashboard-grid">
+            
+            <!-- Main Threat Analysis Card (Left - Large) -->
+            <div class="vkz-threat-card">
+                <div class="vkz-card-header">
+                    <h3 class="vkz-card-title">Threat Analysis</h3>
+                    <div class="vkz-status-badge" id="statusBadge">
+                        <span class="vkz-status-dot"></span>
+                        <span id="statusBadgeText">Analyzing</span>
+                    </div>
+                </div>
+                
+                <!-- Liquid-Metal Circular Progress Ring -->
+                <div class="vkz-status-container">
+                    <div class="liquid-metal-ring" id="liquidRing">
+                        <svg class="ring-svg" viewBox="0 0 200 200">
+                            <defs>
+                                <!-- Liquid Metal Gradient -->
+                                <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color: var(--neon-blue); stop-opacity: 1" />
+                                    <stop offset="50%" style="stop-color: var(--neon-cyan); stop-opacity: 1" />
+                                    <stop offset="100%" style="stop-color: var(--neon-violet); stop-opacity: 1" />
+                                </linearGradient>
+                                
+                                <!-- Glow Filter -->
+                                <filter id="glow">
+                                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            
+                            <!-- Background Circle -->
+                            <circle cx="100" cy="100" r="85" 
+                                stroke="rgba(255,255,255,0.05)" 
+                                stroke-width="3" 
+                                fill="none"/>
+                            
+                            <!-- Animated Progress Circle -->
+                            <circle id="progressCircle" cx="100" cy="100" r="85" 
+                                stroke="url(#liquidGradient)" 
+                                stroke-width="6" 
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-dasharray="534.07"
+                                stroke-dashoffset="534.07"
+                                transform="rotate(-90 100 100)"
+                                filter="url(#glow)"
+                                class="progress-circle"/>
+                        </svg>
+                        
+                        <!-- Center Content -->
+                        <div class="ring-center-content">
+                            <i id="statusIcon" class="fas fa-shield-alt vkz-status-icon"></i>
+                            <div id="statusText" class="vkz-status-text">Safe</div>
+                            <div id="confidenceScore" class="vkz-confidence">99%</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Verdict Text -->
+                    <div class="vkz-verdict">
+                        <h2 id="verdictTitle" class="vkz-verdict-title">Link Verified</h2>
+                        <p id="verdictMessage" class="vkz-verdict-message">This URL appears safe to visit</p>
+                    </div>
+                </div>
+                
+                <!-- Scanned URL Display -->
+                <div class="vkz-url-display">
+                    <div class="vkz-label">Scanned URL</div>
+                    <div id="scannedUrl" class="vkz-url-text">https://example.com</div>
+                </div>
+                
+                <!-- Additional Details -->
+                <div class="vkz-additional-details" style="margin-top: 1.5rem;">
+                    <div class="vkz-detail-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        
+                        <!-- URL Length -->
+                        <div class="vkz-detail-item">
+                            <div class="vkz-label" style="font-size: 0.7rem;">URL Length</div>
+                            <div id="urlLength" style="color: rgba(255, 255, 255, 0.9); font-weight: 600;">-- chars</div>
+                        </div>
+                        
+                        <!-- HTTPS Status -->
+                        <div class="vkz-detail-item">
+                            <div class="vkz-label" style="font-size: 0.7rem;">Protocol</div>
+                            <div id="protocolStatus" style="color: rgba(255, 255, 255, 0.9); font-weight: 600;">--</div>
+                        </div>
+                        
+                        <!-- Subdomains -->
+                        <div class="vkz-detail-item">
+                            <div class="vkz-label" style="font-size: 0.7rem;">Subdomains</div>
+                            <div id="subdomainCount" style="color: rgba(255, 255, 255, 0.9); font-weight: 600;">--</div>
+                        </div>
+                        
+                        <!-- Detection Method -->
+                        <div class="vkz-detail-item">
+                            <div class="vkz-label" style="font-size: 0.7rem;">Detection</div>
+                            <div id="detectionType" style="color: rgba(255, 255, 255, 0.9); font-weight: 600;">--</div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Cards (Right - Stacked Asymmetric) -->
+            <div class="vkz-data-cards">
+                
+                <!-- SSL Certificate Card -->
+                <div class="vkz-micro-card" data-card="ssl">
+                    <div class="vkz-micro-header">
+                        <div class="vkz-icon-container">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="vkz-label">SSL Certificate</div>
+                    </div>
+                    <div id="sslStatus" class="vkz-micro-value">Valid</div>
+                    <div class="vkz-micro-progress">
+                        <div class="vkz-progress-bar" style="width: 100%"></div>
+                    </div>
+                </div>
+                
+                <!-- Domain Age Card -->
+                <div class="vkz-micro-card" data-card="domain">
+                    <div class="vkz-micro-header">
+                        <div class="vkz-icon-container">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="vkz-label">Domain Age</div>
+                    </div>
+                    <div id="domainAge" class="vkz-micro-value">5 Years</div>
+                    <div class="vkz-micro-progress">
+                        <div class="vkz-progress-bar" style="width: 80%"></div>
+                    </div>
+                </div>
+                
+                <!-- AI Confidence Score Card -->
+                <div class="vkz-micro-card vkz-card-highlight" data-card="ai">
+                    <div class="vkz-micro-header">
+                        <div class="vkz-icon-container">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="vkz-label">AI Confidence Score</div>
+                    </div>
+                    <div id="aiConfidence" class="vkz-micro-value">{{ model_accuracy }}</div>
+                    <div class="vkz-micro-subtitle" id="detectionMethod">Neural Analysis Complete</div>
+                </div>
+                
+                <!-- Scan Time Card -->
+                <!-- Risk Level Card -->
+                <div class="vkz-micro-card" data-card="risk">
+                    <div class="vkz-micro-header">
+                        <div class="vkz-icon-container">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="vkz-label">Risk Level</div>
+                    </div>
+                    <div id="riskLevel" class="vkz-micro-value">Low</div>
+                    <div class="vkz-risk-indicator">
+                        <div class="vkz-risk-bar vkz-risk-low"></div>
+                        <div class="vkz-risk-bar"></div>
+                        <div class="vkz-risk-bar"></div>
+                        <div class="vkz-risk-bar"></div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="vkz-actions">
+            <button onclick="scanAnother()" class="vkz-btn vkz-btn-primary">
+                <i class="fas fa-redo"></i> Scan Another URL
+            </button>
+            
+            {% if user %}
+            <a href="{{ url_for('history') }}" class="vkz-btn vkz-btn-secondary">
+                <i class="fas fa-history"></i> View History
+            </a>
+            {% endif %}
+        </div>
+        
+    </div>
+</div>
+
+<!-- Debug Panel -->
+<div id="debugPanel" style="position: fixed; bottom: 20px; right: 20px; width: 400px; max-height: 500px; overflow-y: auto; background: rgba(5, 5, 5, 0.95); border: 2px solid var(--neon-blue); border-radius: 12px; padding: 1rem; font-family: monospace; font-size: 12px; color: #00d9ff; z-index: 10000; display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--neon-blue); padding-bottom: 0.5rem;">
+        <strong style="color: var(--neon-blue);">🔍 Debug Console</strong>
+        <button onclick="document.getElementById('debugPanel').style.display='none'" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer;">Close</button>
+    </div>
+    <div id="debugLog" style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;"></div>
+</div>
+
+<!-- Debug Toggle Button -->
+<button id="debugToggle" onclick="document.getElementById('debugPanel').style.display='block'" style="position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, var(--neon-blue), var(--electric-blue)); color: var(--void-black); border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 700; cursor: pointer; z-index: 9999; box-shadow: 0 4px 20px rgba(0, 217, 255, 0.5);">
+    🐛 Debug
+</button>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/scan-details.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vkz-scanner.js') }}"></script>
+<script>
+</script>
+<script>
+// Debug logger
+window.debugLog = function(message, type = 'info') {
+    const debugLogEl = document.getElementById('debugLog');
+    const timestamp = new Date().toLocaleTimeString();
+    const colors = {
+        info: '#00d9ff',
+        success: '#10b981',
+        error: '#ef4444',
+        warning: '#f59e0b'
+    };
+    const color = colors[type] || colors.info;
+    
+    const logEntry = document.createElement('div');
+    logEntry.style.marginBottom = '0.5rem';
+    logEntry.style.padding = '0.5rem';
+    logEntry.style.background = 'rgba(255, 255, 255, 0.05)';
+    logEntry.style.borderRadius = '4px';
+    logEntry.style.borderLeft = `3px solid ${color}`;
+    logEntry.innerHTML = `<span style="color: rgba(255,255,255,0.5)">[${timestamp}]</span> <span style="color: ${color}">${message}</span>`;
+    
+    debugLogEl.insertBefore(logEntry, debugLogEl.firstChild);
+    
+    // Keep only last 20 entries
+    while (debugLogEl.children.length > 20) {
+        debugLogEl.removeChild(debugLogEl.lastChild);
+    }
+};
+
+// Override console methods to also log to debug panel
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+
+console.log = function(...args) {
+    originalConsoleLog.apply(console, args);
+    const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ');
+    window.debugLog(message, 'info');
+};
+
+console.error = function(...args) {
+    originalConsoleError.apply(console, args);
+    const message = args.map(arg => {
+        if (arg instanceof Error) {
+            return arg.message + '\n' + arg.stack;
+        }
+        return typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg);
+    }).join(' ');
+    window.debugLog('❌ ' + message, 'error');
+};
+
+console.warn = function(...args) {
+    originalConsoleWarn.apply(console, args);
+    window.debugLog('⚠️ ' + args.join(' '), 'warning');
+};
+
+// Log initial state
+window.debugLog('🛡️ TrustLink Scanner Debug Panel Active', 'success');
+window.debugLog('Page loaded at: ' + new Date().toLocaleString(), 'info');
+</script>
+{% endblock %}

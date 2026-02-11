@@ -1,0 +1,36 @@
+# TrustLink Scalability Requirements
+# Install with: pip install -r requirements-scalability.txt
+
+# Base requirements
+-r requirements.txt
+
+# Production WSGI server
+gunicorn>=21.0.0
+
+# Redis for caching and sessions
+redis>=5.0.0
+
+# Celery for async tasks
+celery>=5.3.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Database connection pooling (SQLAlchemy for advanced features)
+# Note: We're using custom pooling, but SQLAlchemy is available if needed
+# sqlalchemy>=2.0.0
+
+# Metrics and monitoring
+prometheus-client>=0.19.0
+
+# Request ID tracking
+flask-request-id>=0.1.0
+
+# CORS support for multi-domain deployments
+flask-cors>=4.0.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Health check utilities
+py-healthcheck>=1.10.0

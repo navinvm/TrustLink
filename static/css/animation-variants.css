@@ -1,0 +1,500 @@
+/**
+ * TrustLink Animation Variants
+ * Compact and Mobile-Optimized Versions
+ */
+
+/* ========== Animation Wrapper Integration ========== */
+.hero-animation-wrapper {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #0A0B1E 0%, #1a0b3a 50%, #0A0B1E 100%);
+    display: block;
+    padding: 0;
+    margin: 0;
+}
+
+/* ========== Animation Toggle ========== */
+.animation-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+.toggle-btn {
+    background: transparent;
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.toggle-btn.active {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: white;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+}
+
+.toggle-btn:hover:not(.active) {
+    background: rgba(0, 210, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+}
+
+/* ========== Skip to Scanner ========== */
+.skip-to-scanner {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 150;
+    animation: fadeInBounce 2s ease 3s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInBounce {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.skip-btn {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 210, 255, 0.4);
+    color: var(--accent-cyan);
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: buttonPulse 2s ease-in-out infinite;
+}
+
+@keyframes buttonPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(0, 210, 255, 0.6);
+    }
+}
+
+.skip-btn:hover {
+    background: rgba(0, 210, 255, 0.15);
+    border-color: rgba(0, 210, 255, 0.8);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 30px rgba(0, 210, 255, 0.6);
+}
+
+.skip-btn i {
+    transition: transform 0.3s ease;
+}
+
+.skip-btn:hover i {
+    transform: translateY(3px);
+}
+
+/* ========== Compact Version (30 seconds) ========== */
+.compact-animation .animation-scene {
+    transition: opacity 0.5s ease;
+}
+
+.compact-animation .scene-1 {
+    /* Faster Problem Scene */
+}
+
+.compact-animation .scene-2 {
+    /* Combine Solution + Analysis */
+}
+
+.compact-animation .scene-3 {
+    /* Quick Defense Comparison */
+}
+
+.compact-animation .scene-4 {
+    /* Fast CTA */
+}
+
+/* Compact: Faster animations */
+.compact-animation .laptop {
+    animation-duration: 0.7s;
+}
+
+.compact-animation .shield-logo {
+    animation-duration: 1.5s;
+}
+
+.compact-animation .url-breakdown {
+    animation-duration: 1s;
+}
+
+.compact-animation .verdict-stamp {
+    animation-duration: 0.7s;
+}
+
+/* ========== Mobile Version (15 seconds) ========== */
+@media (max-width: 768px) {
+    .hero-animation-wrapper {
+        min-height: auto;
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .animation-toggle {
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        flex-wrap: wrap;
+    }
+    
+    .toggle-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .skip-to-scanner {
+        bottom: 60px;
+    }
+    
+    .skip-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Mobile: Ultra-compact scenes */
+    .animation-container {
+        height: 400px !important;
+    }
+    
+    .scene-text {
+        font-size: 1rem !important;
+    }
+    
+    .user-avatar {
+        font-size: 4rem !important;
+    }
+    
+    .laptop {
+        width: 280px !important;
+        height: 180px !important;
+    }
+    
+    .shield-logo {
+        width: 80px !important;
+    }
+    
+    .url-breakdown {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    .tech-stack {
+        flex-direction: column;
+        gap: 1rem !important;
+    }
+}
+
+/* ========== Background Loop Animation ========== */
+.background-loop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.circuit-pattern {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: patternMove 20s linear infinite;
+}
+
+@keyframes patternMove {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 50px 50px;
+    }
+}
+
+.floating-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.particle-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-cyan);
+    animation: floatParticle 15s ease-in-out infinite;
+}
+
+.particle-dot:nth-child(1) {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.particle-dot:nth-child(2) {
+    left: 30%;
+    animation-delay: 3s;
+}
+
+.particle-dot:nth-child(3) {
+    left: 50%;
+    animation-delay: 6s;
+}
+
+.particle-dot:nth-child(4) {
+    left: 70%;
+    animation-delay: 9s;
+}
+
+.particle-dot:nth-child(5) {
+    left: 90%;
+    animation-delay: 12s;
+}
+
+@keyframes floatParticle {
+    0%, 100% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(90vh) scale(1);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(10vh) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(0) scale(0);
+    }
+}
+
+/* ========== Static Hero (No Animation) ========== */
+.static-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, #0A0B1E 0%, #1a0b3a 50%, #0A0B1E 100%);
+    position: relative;
+}
+
+.static-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(106, 13, 173, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.static-hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+}
+
+.static-logo {
+    width: 250px;
+    height: auto;
+    margin-bottom: var(--spacing-xl);
+    filter: drop-shadow(0 0 40px rgba(0, 210, 255, 0.6));
+    animation: staticFloat 4s ease-in-out infinite;
+}
+
+@keyframes staticFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.static-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    margin-bottom: var(--spacing-md);
+    text-shadow: 0 0 40px rgba(0, 210, 255, 0.6);
+    line-height: 1.2;
+}
+
+.static-subtitle {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+    line-height: 1.6;
+}
+
+.static-cta-buttons {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.static-cta-btn {
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.static-cta-btn.primary {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: white;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+}
+
+.static-cta-btn.primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 50px rgba(0, 210, 255, 0.8);
+}
+
+.static-cta-btn.secondary {
+    background: transparent;
+    border: 2px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.static-cta-btn.secondary:hover {
+    background: rgba(0, 210, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+}
+
+.static-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+    max-width: 1000px;
+}
+
+.static-feature {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.static-feature:hover {
+    border-color: rgba(0, 210, 255, 0.5);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+    transform: translateY(-5px);
+}
+
+.static-feature i {
+    font-size: 2.5rem;
+    color: var(--accent-cyan);
+    margin-bottom: var(--spacing-sm);
+    filter: drop-shadow(0 0 15px var(--accent-cyan));
+}
+
+.static-feature h4 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.static-feature p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ========== Responsive Adjustments ========== */
+@media (max-width: 1024px) {
+    .static-title {
+        font-size: 2.5rem;
+    }
+    
+    .static-subtitle {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .static-logo {
+        width: 180px;
+    }
+    
+    .static-title {
+        font-size: 2rem;
+    }
+    
+    .static-subtitle {
+        font-size: 1rem;
+    }
+    
+    .static-cta-buttons {
+        flex-direction: column;
+    }
+    
+    .static-cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .static-features {
+        grid-template-columns: 1fr;
+    }
+}

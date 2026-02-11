@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Download Browser Extension - TrustLink{% endblock %}
+
+{% block content %}
+<div class="page-container" style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem;">
+    
+    <!-- Header -->
+    <div class="page-header" style="text-align: center; margin-bottom: 3rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--neon-blue), var(--neon-violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <i class="fas fa-puzzle-piece"></i> TrustLink Browser Extension
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-secondary);">
+            Real-time phishing protection while you browse
+        </p>
+    </div>
+
+    <!-- Download Section -->
+    <div class="glass-card" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem;">
+        <div style="text-align: center;">
+            <div style="width: 100px; height: 100px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--neon-blue), var(--neon-violet)); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(91, 156, 245, 0.4);">
+                <i class="fab fa-chrome" style="font-size: 48px; color: white;"></i>
+            </div>
+            
+            <h2 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-primary);">
+                Download for Chrome/Edge
+            </h2>
+            
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.8;">
+                Thank you for choosing TrustLink! Click below to download the browser extension.
+            </p>
+            
+            <a href="{{ url_for('extension_download_file') }}" class="btn-download" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: linear-gradient(135deg, var(--neon-blue), var(--neon-violet)); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 8px 24px rgba(91, 156, 245, 0.4); transition: all 0.3s;">
+                <i class="fas fa-download"></i>
+                Download TrustLink Extension
+            </a>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div style="margin-bottom: 3rem;">
+        <h3 style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-primary);">
+            What's Included
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div class="feature-card" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛡️</div>
+                <h4 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Real-Time Protection</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Automatically scans links before you click them</p>
+            </div>
+            
+            <div class="feature-card" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚡</div>
+                <h4 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Instant Scanning</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Quick URL analysis with our AI engine</p>
+            </div>
+            
+            <div class="feature-card" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">📊</div>
+                <h4 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Detailed Reports</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Comprehensive security analysis for every URL</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Installation Instructions -->
+    <div class="glass-card" style="background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--text-primary);">
+            <i class="fas fa-book"></i> Installation Instructions
+        </h3>
+        
+        <ol style="color: var(--text-secondary); line-height: 2; padding-left: 1.5rem;">
+            <li style="margin-bottom: 1rem;">
+                <strong style="color: var(--text-primary);">Download the extension</strong> by clicking the button above
+            </li>
+            <li style="margin-bottom: 1rem;">
+                <strong style="color: var(--text-primary);">Open Chrome/Edge</strong> and navigate to <code style="background: var(--void-surface); padding: 0.25rem 0.5rem; border-radius: 4px; color: var(--neon-cyan);">chrome://extensions/</code>
+            </li>
+            <li style="margin-bottom: 1rem;">
+                <strong style="color: var(--text-primary);">Enable Developer Mode</strong> (toggle in the top-right corner)
+            </li>
+            <li style="margin-bottom: 1rem;">
+                <strong style="color: var(--text-primary);">Drag and drop</strong> the downloaded .crx file onto the extensions page
+            </li>
+            <li>
+                <strong style="color: var(--text-primary);">Click "Add Extension"</strong> when prompted
+            </li>
+        </ol>
+        
+        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(91, 156, 245, 0.1); border-left: 3px solid var(--neon-blue); border-radius: 4px;">
+            <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">
+                <i class="fas fa-info-circle" style="color: var(--neon-blue);"></i>
+                <strong style="color: var(--text-primary);">Note:</strong> If you encounter issues, check the 
+                <a href="{{ url_for('about') }}" style="color: var(--neon-blue); text-decoration: none;">documentation</a> 
+                or contact support.
+            </p>
+        </div>
+    </div>
+
+    <!-- Support Links -->
+    <div style="text-align: center; margin-top: 3rem;">
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">Need help?</p>
+        <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('about') }}" style="color: var(--neon-blue); text-decoration: none; font-weight: 500;">
+                <i class="fas fa-book"></i> Documentation
+            </a>
+            <a href="{{ url_for('dashboard') }}" style="color: var(--neon-blue); text-decoration: none; font-weight: 500;">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="{{ url_for('scanner') }}" style="color: var(--neon-blue); text-decoration: none; font-weight: 500;">
+                <i class="fas fa-search"></i> Scanner
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(91, 156, 245, 0.6);
+}
+
+.feature-card {
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 8px 24px rgba(91, 156, 245, 0.2);
+}
+</style>
+{% endblock %}

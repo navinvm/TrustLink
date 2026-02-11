@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - TrustLink{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-animations.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="analytics-section">
+    <div class="page-header">
+        <h1><i class="fas fa-chart-bar"></i> System Analytics</h1>
+        <a href="{{ url_for('dashboard') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="analytics-summary">
+        <h2><i class="fas fa-calendar-alt"></i> Last 30 Days Overview</h2>
+        
+        {% if analytics %}
+        <div class="analytics-stats-grid">
+            <div class="analytics-stat-card">
+                <div class="stat-icon total">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Scans</h3>
+                    <p class="stat-number">{{ analytics|sum(attribute='total_scans') }}</p>
+                </div>
+            </div>
+
+            <div class="analytics-stat-card">
+                <div class="stat-icon safe">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Safe URLs</h3>
+                    <p class="stat-number">{{ analytics|sum(attribute='safe_urls') }}</p>
+                </div>
+            </div>
+
+            <div class="analytics-stat-card">
+                <div class="stat-icon danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Phishing Detected</h3>
+                    <p class="stat-number">{{ analytics|sum(attribute='phishing_urls') }}</p>
+                </div>
+            </div>
+
+            <div class="analytics-stat-card">
+                <div class="stat-icon accuracy">
+                    <i class="fas fa-percent"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Threat Rate</h3>
+                    {% set total = analytics|sum(attribute='total_scans') %}
+                    {% set phishing = analytics|sum(attribute='phishing_urls') %}
+                    <p class="stat-number">
+                        {% if total > 0 %}
+                            {{ "%.1f"|format((phishing / total) * 100) }}%
+                        {% else %}
+                            0.0%
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Breakdown -->
+        <div class="analytics-table-card">
+            <h3><i class="fas fa-table"></i> Daily Breakdown</h3>
+            <div class="table-container">
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Total Scans</th>
+                            <th>Safe URLs</th>
+                            <th>Phishing URLs</th>
+                            <th>Threat Rate</th>
+                            <th>Visual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for day in analytics %}
+                        <tr>
+                            <td><strong>{{ day.date }}</strong></td>
+                            <td>{{ day.total_scans }}</td>
+                            <td class="safe-text">{{ day.safe_urls }}</td>
+                            <td class="danger-text">{{ day.phishing_urls }}</td>
+                            <td>
+                                {% if day.total_scans > 0 %}
+                                    {{ "%.1f"|format((day.phishing_urls / day.total_scans) * 100) }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="mini-bar-chart">
+                                    {% if day.total_scans > 0 %}
+                                    <div class="bar-segment safe" 
+                                         style="width: {{ (day.safe_urls / day.total_scans) * 100 }}%"
+                                         title="Safe: {{ day.safe_urls }}"></div>
+                                    <div class="bar-segment phishing" 
+                                         style="width: {{ (day.phishing_urls / day.total_scans) * 100 }}%"
+                                         title="Phishing: {{ day.phishing_urls }}"></div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Advanced Trend Analysis -->
+        <div class="trend-analysis-section">
+            <h2 style="margin: 2rem 0 1.5rem 0; color: var(--accent-cyan);"><i class="fas fa-chart-line"></i> Advanced Trend Analysis</h2>
+            
+            <!-- Threat Level Timeline -->
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3><i class="fas fa-exclamation-triangle"></i> Threat Level Timeline</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Phishing detection trends over the last 30 days</p>
+                <canvas id="threatTimelineChart"></canvas>
+            </div>
+            
+            <!-- Detection Rate Comparison -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="chart-card">
+                    <h3><i class="fas fa-percentage"></i> Detection Rate</h3>
+                    <div style="text-align: center; padding: 2rem 0;">
+                        {% set total = analytics|sum(attribute='total_scans') %}
+                        {% set phishing = analytics|sum(attribute='phishing_urls') %}
+                        {% set rate = ((phishing / total * 100) if total > 0 else 0)|round(1) %}
+                        <div style="font-size: 4rem; font-weight: 700; color: var(--danger-red); margin-bottom: 0.5rem;">{{ rate }}%</div>
+                        <p style="color: var(--text-secondary); font-size: 1.1rem;">Threats Detected</p>
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                            <i class="fas fa-search" style="color: var(--accent-cyan);"></i>
+                            <span style="color: var(--text-secondary); margin-left: 0.5rem;">Monitoring {{ total }} scans</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3><i class="fas fa-shield-check"></i> Safety Score</h3>
+                    <div style="text-align: center; padding: 2rem 0;">
+                        {% set safe = analytics|sum(attribute='safe_urls') %}
+                        {% set safety_rate = ((safe / total * 100) if total > 0 else 0)|round(1) %}
+                        <div style="font-size: 4rem; font-weight: 700; color: var(--success-green); margin-bottom: 0.5rem;">{{ safety_rate }}%</div>
+                        <p style="color: var(--text-secondary); font-size: 1.1rem;">URLs Verified Safe</p>
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                            <i class="fas fa-check-circle" style="color: var(--success-green);"></i>
+                            <span style="color: var(--text-secondary); margin-left: 0.5rem;">{{ safe }} safe URLs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weekly Comparison -->
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3><i class="fas fa-calendar-week"></i> Weekly Threat Comparison</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Compare threat levels across weeks</p>
+                <canvas id="weeklyComparisonChart"></canvas>
+            </div>
+            
+            <!-- Peak Activity Insights -->
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3><i class="fas fa-clock"></i> Peak Activity Insights</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                    <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 4px solid var(--warning-orange);">
+                        <i class="fas fa-fire" style="font-size: 2rem; color: var(--warning-orange); margin-bottom: 1rem;"></i>
+                        <div>
+                            <strong style="color: var(--text-primary); display: block; margin-bottom: 0.5rem;">Busiest Day</strong>
+                            {% set max_day = analytics|max(attribute='total_scans') %}
+                            <p style="color: var(--text-secondary);">{{ max_day.date }} - <strong style="color: var(--accent-cyan);">{{ max_day.total_scans }} scans</strong></p>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 4px solid var(--danger-red);">
+                        <i class="fas fa-biohazard" style="font-size: 2rem; color: var(--danger-red); margin-bottom: 1rem;"></i>
+                        <div>
+                            <strong style="color: var(--text-primary); display: block; margin-bottom: 0.5rem;">Highest Threat Day</strong>
+                            {% set max_threat_day = analytics|max(attribute='phishing_urls') %}
+                            <p style="color: var(--text-secondary);">{{ max_threat_day.date }} - <strong style="color: var(--danger-red);">{{ max_threat_day.phishing_urls }} threats</strong></p>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 4px solid var(--success-green);">
+                        <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--success-green); margin-bottom: 1rem;"></i>
+                        <div>
+                            <strong style="color: var(--text-primary); display: block; margin-bottom: 0.5rem;">Safest Day</strong>
+                            {% set max_safe_day = analytics|max(attribute='safe_urls') %}
+                            <p style="color: var(--text-secondary);">{{ max_safe_day.date }} - <strong style="color: var(--success-green);">{{ max_safe_day.safe_urls }} safe URLs</strong></p>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 4px solid var(--accent-cyan);">
+                        <i class="fas fa-chart-area" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+                        <div>
+                            <strong style="color: var(--text-primary); display: block; margin-bottom: 0.5rem;">Daily Average</strong>
+                            {% set avg_scans = (total / 30)|round(0) %}
+                            <p style="color: var(--text-secondary);"><strong style="color: var(--accent-cyan);">{{ avg_scans }} scans</strong> per day</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Threat Distribution & Performance -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                <div class="chart-card">
+                    <h3><i class="fas fa-pie-chart"></i> Threat Distribution</h3>
+                    <canvas id="threatDistributionChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <h3><i class="fas fa-tachometer-alt"></i> Performance Metrics</h3>
+                    <div style="margin-top: 1.5rem;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-secondary);">Detection Accuracy</span>
+                                <span style="color: var(--accent-cyan); font-weight: 600;">{{ model_accuracy }}</span>
+                            </div>
+                            <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;">
+                                <div style="width: {{ model_accuracy }}%; height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-secondary);">Scan Success Rate</span>
+                                <span style="color: var(--success-green); font-weight: 600;">100%</span>
+                            </div>
+                            <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;">
+                                <div style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--success-green), #00cc6a);"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-secondary);">System Uptime</span>
+                                <span style="color: var(--accent-cyan); font-weight: 600;">99.9%</span>
+                            </div>
+                            <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;">
+                                <div style="width: 99.9%; height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-chart-line"></i>
+            <h2>No Analytics Data</h2>
+            <p>Analytics will appear here once users start scanning URLs.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if analytics %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Prepare data for chart
+    const dates = {{ (analytics|map(attribute='date')|list|reverse|list)|tojson }};
+    const totalScans = {{ (analytics|map(attribute='total_scans')|list|reverse|list)|tojson }};
+    const safeUrls = {{ (analytics|map(attribute='safe_urls')|list|reverse|list)|tojson }};
+    const phishingUrls = {{ (analytics|map(attribute='phishing_urls')|list|reverse|list)|tojson }};
+
+    // Common chart options
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                labels: { color: 'rgba(255, 255, 255, 0.8)', font: { size: 12 } }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { color: 'rgba(255, 255, 255, 0.6)' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+                ticks: { color: 'rgba(255, 255, 255, 0.6)' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+        }
+    };
+    
+    // 1. Threat Timeline Chart (Area Chart)
+    new Chart(document.getElementById('threatTimelineChart'), {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Phishing Threats',
+                data: phishingUrls,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2
+            }, {
+                label: 'Safe URLs',
+                data: safeUrls,
+                borderColor: '#39FF14',
+                backgroundColor: 'rgba(57, 255, 20, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2
+            }]
+        },
+        options: chartOptions
+    });
+    
+    // 2. Weekly Comparison Chart (Bar Chart)
+    const weeklyData = [];
+    const weekLabels = [];
+    for (let i = 0; i < phishingUrls.length; i += 7) {
+        const weekThreats = phishingUrls.slice(i, i + 7).reduce((a, b) => a + b, 0);
+        weeklyData.push(weekThreats);
+        weekLabels.push(`Week ${Math.floor(i/7) + 1}`);
+    }
+    
+    new Chart(document.getElementById('weeklyComparisonChart'), {
+        type: 'bar',
+        data: {
+            labels: weekLabels,
+            datasets: [{
+                label: 'Threats Detected',
+                data: weeklyData,
+                backgroundColor: [
+                    'rgba(91, 156, 245, 0.8)',
+                    'rgba(155, 127, 214, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(255, 149, 0, 0.8)'
+                ],
+                borderColor: [
+                    '#5b9cf5',
+                    '#9b7fd6',
+                    '#ef4444',
+                    '#ff9500'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: chartOptions
+    });
+    
+    // 3. Threat Distribution Chart (Doughnut)
+    const totalSafe = safeUrls.reduce((a, b) => a + b, 0);
+    const totalThreats = phishingUrls.reduce((a, b) => a + b, 0);
+    
+    new Chart(document.getElementById('threatDistributionChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Safe URLs', 'Phishing Threats'],
+            datasets: [{
+                data: [totalSafe, totalThreats],
+                backgroundColor: [
+                    'rgba(57, 255, 20, 0.8)',
+                    'rgba(239, 68, 68, 0.8)'
+                ],
+                borderColor: [
+                    '#39FF14',
+                    '#ef4444'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: 'rgba(255, 255, 255, 0.8)', padding: 15, font: { size: 12 } }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

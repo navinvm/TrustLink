@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Scanner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #00D2FF;
+            border-radius: 5px;
+            background: #16213e;
+            color: white;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: #00D2FF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #000;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00b8e6;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #16213e;
+            border-radius: 5px;
+            border-left: 4px solid #00D2FF;
+        }
+        .hidden {
+            display: none;
+        }
+        .console-log {
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Scanner Page</h1>
+    <p>Simple test to verify JavaScript is working</p>
+
+    <div class="console-log" id="consoleLog">
+        <div>Console Output:</div>
+    </div>
+
+    <div class="form-group">
+        <form id="testForm">
+            <input type="text" id="urlInput" placeholder="Enter a URL to test" value="https://google.com" required>
+            <br><br>
+            <button type="submit" id="submitBtn">🔍 Test Scan</button>
+        </form>
+    </div>
+
+    <div id="result" class="hidden">
+        <h3>Result:</h3>
+        <pre id="resultContent"></pre>
+    </div>
+
+    <script>
+        function log(message) {
+            const consoleLog = document.getElementById('consoleLog');
+            const div = document.createElement('div');
+            div.textContent = '> ' + message;
+            consoleLog.appendChild(div);
+            console.log(message);
+        }
+
+        log('Script loaded!');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            log('DOM Ready');
+            
+            const form = document.getElementById('testForm');
+            const urlInput = document.getElementById('urlInput');
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            log('Form element: ' + (form ? 'FOUND' : 'NOT FOUND'));
+            
+            if (!form) {
+                log('ERROR: Form not found!');
+                return;
+            }
+            
+            form.addEventListener('submit', async function(e) {
+                log('Form submitted! preventDefault called.');
+                e.preventDefault();
+                
+                const url = urlInput.value.trim();
+                log('URL to scan: ' + url);
+                
+                result.classList.remove('hidden');
+                resultContent.textContent = 'Loading...';
+                
+                try {
+                    log('Sending POST request to /predict');
+                    
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ url: url })
+                    });
+                    
+                    log('Response status: ' + response.status);
+                    
+                    const data = await response.json();
+                    log('Response received');
+                    
+                    resultContent.textContent = JSON.stringify(data, null, 2);
+                    
+                } catch (error) {
+                    log('ERROR: ' + error.message);
+                    resultContent.textContent = 'Error: ' + error.message;
+                }
+            });
+            
+            log('Event listener attached successfully');
+        });
+    </script>
+</body>
+</html>

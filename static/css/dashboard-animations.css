@@ -1,0 +1,467 @@
+/**
+ * TrustLink Dashboard & Analytics Animations
+ * Adds motion and life to all dashboard pages
+ */
+
+/* ========== Dashboard Page Animations ========== */
+
+/* Header Animation */
+.dashboard-header {
+    animation: slideInFromTop 0.8s ease;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stats Cards Animation */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+
+.stat-card {
+    animation: fadeInUp 0.6s ease both;
+    transition: all 0.3s ease;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 10px 40px rgba(0, 210, 255, 0.3);
+}
+
+/* Stat Number Counter Animation */
+.stat-number {
+    display: inline-block;
+    animation: countUp 1.5s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Stat Icon - Removed continuous animations */
+.stat-icon {
+    transition: transform 0.3s ease;
+}
+
+.stat-icon:hover {
+    transform: scale(1.1);
+}
+
+.stat-icon.total {
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+}
+
+.stat-icon.safe {
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+}
+
+.stat-icon.danger {
+    box-shadow: 0 0 20px rgba(255, 49, 49, 0.4);
+}
+
+.stat-icon.accuracy {
+    /* No continuous rotation */
+}
+
+/* Quick Actions Animation */
+.quick-actions {
+    animation: slideInFromBottom 0.8s ease 0.5s both;
+}
+
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.action-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.action-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.action-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 210, 255, 0.4);
+}
+
+/* Dashboard Section Cards Animation */
+.dashboard-section-card {
+    animation: fadeInScale 0.8s ease both;
+    transition: all 0.3s ease;
+}
+
+.dashboard-section-card:nth-of-type(1) { animation-delay: 0.6s; }
+.dashboard-section-card:nth-of-type(2) { animation-delay: 0.8s; }
+.dashboard-section-card:nth-of-type(3) { animation-delay: 1s; }
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.dashboard-section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 210, 255, 0.2);
+}
+
+/* Table Rows Animation */
+.scan-table tbody tr {
+    animation: slideInFromLeft 0.5s ease both;
+    transition: all 0.3s ease;
+}
+
+.scan-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.scan-table tbody tr:nth-child(2) { animation-delay: 0.15s; }
+.scan-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
+.scan-table tbody tr:nth-child(4) { animation-delay: 0.25s; }
+.scan-table tbody tr:nth-child(5) { animation-delay: 0.3s; }
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.scan-table tbody tr:hover {
+    background: rgba(0, 210, 255, 0.1);
+    transform: translateX(5px);
+    box-shadow: 0 5px 20px rgba(0, 210, 255, 0.2);
+}
+
+/* Badge Animations */
+.badge {
+    transition: all 0.3s ease;
+    animation: badgePulse 0.5s ease;
+}
+
+@keyframes badgePulse {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+.badge-safe {
+    animation: badgePulse 0.5s ease;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+.badge-danger {
+    animation: badgePulse 0.5s ease;
+}
+
+/* API Key Items Animation */
+.api-key-item {
+    animation: slideInFromRight 0.5s ease both;
+    transition: all 0.3s ease;
+}
+
+.api-key-item:nth-child(1) { animation-delay: 0.1s; }
+.api-key-item:nth-child(2) { animation-delay: 0.2s; }
+.api-key-item:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.api-key-item:hover {
+    background: rgba(0, 210, 255, 0.1);
+    transform: translateX(-5px);
+    box-shadow: 0 5px 20px rgba(0, 210, 255, 0.2);
+}
+
+/* Empty State Animation */
+.empty-state {
+    animation: fadeInScale 1s ease;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    /* Removed continuous bounce animation */
+}
+
+/* ========== Analytics Page Animations ========== */
+
+/* Charts Container Animation */
+.charts-grid {
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.chart-card {
+    animation: zoomIn 0.6s ease both;
+    transition: all 0.3s ease;
+}
+
+.chart-card:nth-child(1) { animation-delay: 0.1s; }
+.chart-card:nth-child(2) { animation-delay: 0.2s; }
+.chart-card:nth-child(3) { animation-delay: 0.3s; }
+.chart-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.chart-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 50px rgba(0, 210, 255, 0.3);
+}
+
+/* Chart Loading Animation */
+.chart-placeholder {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Chart placeholder shimmer removed - only show when actively loading */
+.chart-placeholder.loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    to {
+        left: 100%;
+    }
+}
+
+/* Filter Controls Animation */
+.filter-controls {
+    animation: slideInFromTop 0.8s ease 0.3s both;
+}
+
+.filter-btn {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.filter-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent-cyan);
+    transition: width 0.3s, left 0.3s;
+}
+
+.filter-btn:hover::after,
+.filter-btn.active::after {
+    width: 100%;
+    left: 0;
+}
+
+/* Stats Summary Animation */
+.stats-summary {
+    animation: expandWidth 1s ease;
+}
+
+@keyframes expandWidth {
+    from {
+        max-width: 0;
+        opacity: 0;
+    }
+    to {
+        max-width: 100%;
+        opacity: 1;
+    }
+}
+
+/* Progress Bars in Analytics */
+.progress-bar-container {
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    animation: fillProgress 2s ease-out;
+}
+
+@keyframes fillProgress {
+    from {
+        width: 0;
+    }
+}
+
+/* Data Point Hover Effects */
+.data-point {
+    transition: all 0.3s ease;
+}
+
+.data-point:hover {
+    transform: scale(1.3);
+    filter: drop-shadow(0 0 10px var(--accent-cyan));
+}
+
+/* ========== Loading Animations ========== */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========== Notification Animations ========== */
+.notification {
+    animation: notificationSlide 0.5s ease;
+}
+
+@keyframes notificationSlide {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ========== Responsive Animations ========== */
+@media (max-width: 768px) {
+    /* Reduce animation complexity on mobile */
+    .stat-icon {
+        animation: none;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* ========== Page Transition Animation ========== */
+@keyframes pageLoad {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-section,
+.analytics-section {
+    animation: pageLoad 0.8s ease;
+}

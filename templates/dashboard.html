@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TrustLink{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/text-animations.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-animations.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="dashboard-header">
+        <h1 class="fade-in-down"><i class="fas fa-chart-line"></i> Security Dashboard</h1>
+        <p class="fade-in-up stagger-1">Welcome back, <strong>{{ user.username }}</strong></p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card scale-in stagger-1 hover-lift">
+            <div class="stat-icon total">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Scans</h3>
+                <p class="stat-number count-up">{{ stats.total_scans or 0 }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card scale-in stagger-2 hover-lift">
+            <div class="stat-icon safe">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Safe URLs</h3>
+                <p class="stat-number count-up">{{ stats.safe_count or 0 }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card scale-in stagger-3 hover-lift">
+            <div class="stat-icon danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Threats Detected</h3>
+                <p class="stat-number count-up">{{ stats.phishing_count or 0 }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card scale-in stagger-4 hover-lift">
+            <div class="stat-icon accuracy">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Avg Confidence</h3>
+                <p class="stat-number count-up">{{ "%.1f"|format(stats.avg_confidence or 0) }}%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="{{ url_for('index') }}" class="action-btn primary">
+            <i class="fas fa-search"></i> New Scan
+        </a>
+        <a href="{{ url_for('history') }}" class="action-btn secondary">
+            <i class="fas fa-history"></i> View History
+        </a>
+        <a href="{{ url_for('api_keys') }}" class="action-btn secondary">
+            <i class="fas fa-key"></i> API Keys
+        </a>
+        <a href="{{ url_for('analytics') }}" class="action-btn secondary">
+            <i class="fas fa-chart-bar"></i> Analytics
+        </a>
+    </div>
+
+    <!-- Recent Scans -->
+    <div class="dashboard-section-card fade-in-up stagger-5">
+        <h2>
+            <i class="fas fa-clock"></i> Recent Scans
+            {% if is_admin_view %}
+            <span style="color: #667eea; font-size: 0.7em; font-weight: 500; margin-left: 10px;">(All Users)</span>
+            {% endif %}
+        </h2>
+        {% if recent_scans %}
+        <div class="table-container">
+            <table class="scan-table">
+                <thead>
+                    <tr>
+                        {% if is_admin_view %}
+                        <th>User</th>
+                        {% endif %}
+                        <th>URL</th>
+                        <th>Result</th>
+                        <th>Confidence</th>
+                        <th>Risk Level</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for scan in recent_scans %}
+                    <tr>
+                        {% if is_admin_view %}
+                        <td>
+                            <span class="user-badge" style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; font-size: 0.85em;">
+                                <i class="fas fa-user"></i> {{ scan.username or 'Anonymous' }}
+                            </span>
+                        </td>
+                        {% endif %}
+                        <td class="url-cell">{{ scan.url[:50] }}{% if scan.url|length > 50 %}...{% endif %}</td>
+                        <td>
+                            <span class="badge {% if scan.prediction == 'Safe' %}badge-safe{% else %}badge-danger{% endif %}">
+                                {{ scan.prediction }}
+                            </span>
+                        </td>
+                        <td>{{ "%.1f"|format(scan.confidence) }}%</td>
+                        <td>
+                            <span class="badge badge-{{ scan.risk_level }}">
+                                {{ scan.risk_level.upper() }}
+                            </span>
+                        </td>
+                        <td>{{ scan.scanned_at[:19] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="section-footer">
+            <a href="{{ url_for('history') }}" class="link-button">View All History →</a>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>No scans yet. Start by analyzing a URL!</p>
+            <a href="{{ url_for('index') }}" class="btn-primary">Scan Your First URL</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- API Keys Section -->
+    <div class="dashboard-section-card fade-in-up stagger-6">
+        <h2><i class="fas fa-key"></i> API Keys</h2>
+        {% if api_keys %}
+        <div class="api-keys-list">
+            {% for key in api_keys[:3] %}
+            <div class="api-key-item">
+                <div class="api-key-info">
+                    <strong>{{ key.key_name }}</strong>
+                    <span class="api-key-meta">Created: {{ key.created_at[:10] }} | Uses: {{ key.usage_count }}</span>
+                </div>
+                <span class="badge {% if key.is_active %}badge-safe{% else %}badge-inactive{% endif %}">
+                    {% if key.is_active %}Active{% else %}Revoked{% endif %}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-footer">
+            <a href="{{ url_for('api_keys') }}" class="link-button">Manage API Keys →</a>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-key"></i>
+            <p>No API keys created yet.</p>
+            <a href="{{ url_for('api_keys') }}" class="btn-primary">Create API Key</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Account Settings -->
+    <div class="dashboard-section-card fade-in-up stagger-7" style="border: 1px solid rgba(239, 68, 68, 0.3);">
+        <h2><i class="fas fa-user-cog"></i> Account Settings</h2>
+        <div style="padding: 1.5rem; background: rgba(239, 68, 68, 0.05); border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2);">
+            <h3 style="margin-bottom: 1rem; color: #ef4444; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-exclamation-triangle"></i> Danger Zone
+            </h3>
+            <p style="margin-bottom: 1rem; opacity: 0.9;">
+                Permanently delete your account and all associated data. This action cannot be undone.
+            </p>
+            <ul style="margin-bottom: 1.5rem; opacity: 0.8; padding-left: 1.5rem;">
+                <li>All scan history will be deleted</li>
+                <li>All API keys will be revoked</li>
+                <li>All whitelisted domains will be removed</li>
+                <li>Your account will be permanently removed</li>
+            </ul>
+            <button onclick="deleteAccount()" class="btn-danger" style="background: #ef4444; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                <i class="fas fa-trash-alt"></i> Delete Account Permanently
+            </button>
+        </div>
+    </div>
+</section>
+
+<script>
+// Delete Account Function
+function deleteAccount() {
+    // First confirmation
+    const confirmDelete = confirm('⚠️ WARNING: This will permanently delete your account!\n\nAll your data including:\n- Scan history\n- API keys\n- Whitelisted domains\n- Account information\n\nWill be permanently removed and cannot be recovered.\n\nAre you absolutely sure you want to continue?');
+    
+    if (!confirmDelete) {
+        return;
+    }
+    
+    // Second confirmation - make user type confirmation
+    const username = '{{ user.username }}';
+    const confirmText = prompt(`To confirm deletion, please type your username: "${username}"`);
+    
+    if (confirmText !== username) {
+        if (confirmText !== null) { // User didn't cancel
+            alert('Username did not match. Account deletion cancelled.');
+        }
+        return;
+    }
+    
+    // Final confirmation
+    const finalConfirm = confirm('This is your FINAL warning!\n\nOnce deleted, your account cannot be recovered.\n\nProceed with permanent account deletion?');
+    
+    if (!finalConfirm) {
+        return;
+    }
+    
+    // Proceed with deletion
+    fetch('/api/account/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            // Redirect to homepage
+            window.location.href = data.redirect || '/';
+        } else {
+            alert('Error: ' + (data.message || 'Failed to delete account'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting your account. Please try again.');
+    });
+}
+</script>
+{% endblock %}

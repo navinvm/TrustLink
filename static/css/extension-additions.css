@@ -1,0 +1,344 @@
+/* Additional styles for browser extension features */
+
+/* Risk Score Container */
+.risk-score-container {
+  margin: 16px 0;
+  padding: 12px;
+  background: rgba(0, 210, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.risk-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.risk-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b8b9d4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.risk-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #00D2FF;
+  font-family: 'Public Sans', 'Courier New', monospace;
+  text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+.risk-bar {
+  height: 12px;
+  background: rgba(10, 11, 30, 0.8);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.risk-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #39FF14, #00D2FF);
+  border-radius: 6px;
+  transition: width 1s ease, background 0.5s ease;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.risk-progress.high {
+  background: linear-gradient(90deg, #FF3131, #ff6b6b);
+}
+
+.risk-progress.medium {
+  background: linear-gradient(90deg, #ff9500, #ffc107);
+}
+
+.risk-progress.low {
+  background: linear-gradient(90deg, #39FF14, #00D2FF);
+}
+
+/* Why is this flagged dropdown */
+.flagged-dropdown {
+  margin: 12px 0;
+}
+
+.dropdown-toggle {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  border-radius: 8px;
+  color: #00D2FF;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+  background: rgba(0, 210, 255, 0.1);
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.dropdown-toggle.active .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-content {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 210, 255, 0.1);
+  border-radius: 8px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: #b8b9d4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.flagged-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.flagged-list li {
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  background: rgba(255, 49, 49, 0.1);
+  border-left: 3px solid #FF3131;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #b8b9d4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flagged-list li i {
+  color: #FF3131;
+  font-size: 10px;
+}
+
+/* Safe Mode Toggle */
+.safe-mode-section {
+  background: rgba(0, 210, 255, 0.03);
+  border-top: 1px solid rgba(0, 210, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 210, 255, 0.1);
+}
+
+.safe-mode-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-info {
+  flex: 1;
+}
+
+.toggle-info strong {
+  display: block;
+  font-size: 14px;
+  color: #00D2FF;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.toggle-info small {
+  display: block;
+  font-size: 11px;
+  color: #7a7b9a;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #7a7b9a;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #00D2FF, #0099ff);
+  border-color: #00D2FF;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+  background: white;
+  box-shadow: 0 0 5px rgba(0, 210, 255, 0.8);
+}
+
+.slider:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+input:checked + .slider:hover {
+  background: linear-gradient(135deg, #00D2FF, #0099ff);
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.7);
+}
+
+/* Page Info styles update */
+.page-info {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.page-url {
+  font-size: 12px;
+  color: #b8b9d4;
+  font-family: 'Public Sans', 'Courier New', monospace;
+  word-break: break-all;
+  margin-bottom: 8px;
+}
+
+.page-stats {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 210, 255, 0.1);
+}
+
+.page-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.page-stat-label {
+  color: #b8b9d4;
+}
+
+.page-stat-value {
+  color: #00D2FF;
+  font-weight: 600;
+}
+
+.page-stat-danger .page-stat-value {
+  color: #FF3131;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 49, 49, 0.5);
+}
+
+/* Footer Updates */
+.footer {
+  margin-top: auto;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(0, 210, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.footer-links a {
+  color: #7a7b9a;
+  text-decoration: none;
+  font-size: 11px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #00D2FF;
+}
+
+.separator {
+  color: #7a7b9a;
+}
+
+.version {
+  text-align: center;
+  font-size: 10px;
+  color: #7a7b9a;
+}
+
+/* Actions update */
+.actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.actions .btn {
+  flex: 1;
+  justify-content: center;
+}

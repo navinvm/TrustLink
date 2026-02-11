@@ -1,0 +1,871 @@
+/**
+ * TrustLink - VKZ Studio Inspired Dark-Tech Theme
+ * Ultra-minimalist premium design with glassmorphism and neon accents
+ */
+
+:root {
+    /* VKZ Color Palette - Dark with Blue/Violet Accents */
+    --void-black: #0a0b1e;
+    --void-charcoal: #12132b;
+    --void-navy: #1a1b3a;
+    --void-surface: #1f2042;
+    
+    /* Solid Accents - Light Blue & Violet */
+    --neon-blue: #5b9cf5;
+    --neon-violet: #9b7fd6;
+    --neon-cyan: #7ba3f7;
+    --electric-blue: #6a94f0;
+    
+    /* Glassmorphism */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(91, 156, 245, 0.2);
+    --glass-blur: 20px;
+    
+    /* Typography */
+    --font-display: 'Satoshi', 'Public Sans', -apple-system, system-ui, sans-serif;
+    --font-body: 'Public Sans', -apple-system, system-ui, sans-serif;
+    
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+}
+
+/* Base Reset - VKZ Style */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--void-black);
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.6;
+    font-weight: 400;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Neural Network Background */
+.neural-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0.4;
+}
+
+.neural-background canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* Grain Texture Overlay - VKZ Signature */
+.grain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Hero Container */
+.vkz-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    z-index: 2;
+}
+
+.vkz-hero-content {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Premium Typography */
+.vkz-badge {
+    display: inline-block;
+    padding: var(--space-2) var(--space-6);
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--neon-blue);
+    margin-bottom: var(--space-8);
+    backdrop-filter: blur(10px);
+    animation: float-badge 3s ease-in-out infinite;
+}
+
+@keyframes float-badge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.vkz-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-6);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fade-in-up 0.8s ease-out;
+}
+
+.vkz-title .gradient-text {
+    background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-violet) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.vkz-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 600px;
+    margin: 0 auto var(--space-12);
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+    animation: fade-in-up 0.8s ease-out 0.2s both;
+}
+
+/* Glassmorphism Search Bar - The Centerpiece */
+.vkz-scanner {
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    animation: fade-in-up 0.8s ease-out 0.4s both;
+}
+
+.vkz-search-container {
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: var(--space-3);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vkz-search-container:hover {
+    border-color: rgba(0, 217, 255, 0.3);
+    box-shadow: 
+        0 12px 48px rgba(0, 217, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.vkz-search-container:focus-within {
+    border-color: rgba(0, 217, 255, 0.5);
+    box-shadow: 
+        0 16px 64px rgba(0, 217, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 4px rgba(0, 217, 255, 0.1);
+}
+
+.vkz-search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.vkz-search-icon {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.25rem;
+    transition: color 0.3s ease;
+}
+
+.vkz-search-container:focus-within .vkz-search-icon {
+    color: var(--neon-blue);
+}
+
+.vkz-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    font-family: var(--font-body);
+    padding: var(--space-4) var(--space-2);
+    letter-spacing: 0.01em;
+}
+
+.vkz-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 400;
+}
+
+/* Neon Glow Button */
+.vkz-scan-btn {
+    position: relative;
+    padding: var(--space-4) var(--space-8);
+    background: linear-gradient(135deg, var(--neon-blue) 0%, var(--electric-blue) 100%);
+    border: none;
+    border-radius: 12px;
+    color: var(--void-black);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 16px rgba(0, 217, 255, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.vkz-scan-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.vkz-scan-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 32px rgba(0, 217, 255, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.vkz-scan-btn:hover::before {
+    left: 100%;
+}
+
+.vkz-scan-btn:active {
+    transform: translateY(0);
+}
+
+/* Loading State - Scanning Beam */
+.vkz-scan-btn.scanning {
+    background: linear-gradient(135deg, var(--neon-violet) 0%, var(--neon-blue) 100%);
+    animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 4px 16px rgba(147, 51, 234, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 32px rgba(147, 51, 234, 0.8);
+    }
+}
+
+/* Scanning Beam Animation */
+.scanning-beam {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--neon-blue) 50%, 
+        transparent 100%);
+    opacity: 0;
+    animation: scanning 2s ease-in-out infinite;
+}
+
+@keyframes scanning {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Fade In Animations */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo Styling */
+.vkz-logo-container {
+    margin: 2rem auto;
+    animation: fade-in-up 0.8s ease-out 0.3s both;
+}
+
+.vkz-logo {
+    max-width: 200px;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.3));
+    transition: all 0.5s ease;
+}
+
+.vkz-logo:hover {
+    filter: drop-shadow(0 0 30px rgba(0, 217, 255, 0.6));
+    transform: scale(1.05);
+}
+
+/* ================================================
+   VKZ STUDIO RESULTS DASHBOARD
+   Asymmetric Grid + Liquid Metal + Micro-interactions
+   ================================================ */
+
+/* Dashboard Grid - Asymmetric Layout */
+.vkz-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    animation: fade-in-up 0.6s ease-out;
+}
+
+/* Main Threat Analysis Card */
+.vkz-threat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.vkz-threat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(0, 217, 255, 0.05), 
+        transparent);
+    transition: left 0.6s;
+}
+
+.vkz-threat-card:hover::before {
+    left: 100%;
+}
+
+.vkz-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vkz-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: rgba(255, 255, 255, 0.95);
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.15em;
+}
+
+.vkz-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--neon-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.vkz-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--neon-blue);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7);
+    }
+    50% {
+        opacity: 0.6;
+        box-shadow: 0 0 0 4px rgba(0, 217, 255, 0);
+    }
+}
+
+/* Liquid-Metal Circular Progress Ring */
+.vkz-status-container {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.liquid-metal-ring {
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 2rem;
+    position: relative;
+}
+
+.ring-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.progress-circle {
+    transition: stroke-dashoffset 1s cubic-bezier(0.65, 0, 0.35, 1),
+                stroke 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    animation: liquid-flow 2.5s ease-in-out infinite;
+    will-change: stroke-dashoffset, transform;
+    transform-origin: center;
+}
+
+@keyframes liquid-flow {
+    0%, 100% {
+        filter: url(#glow) drop-shadow(0 0 10px currentColor);
+        opacity: 1;
+    }
+    50% {
+        filter: url(#glow) drop-shadow(0 0 20px currentColor);
+        opacity: 0.95;
+    }
+}
+
+.ring-center-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.vkz-status-icon {
+    font-size: 3.5rem;
+    color: var(--neon-blue);
+    margin-bottom: 0.5rem;
+    display: block;
+    animation: icon-glow 2s ease-in-out infinite;
+}
+
+@keyframes icon-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 8px currentColor);
+    }
+    50% {
+        filter: drop-shadow(0 0 16px currentColor);
+    }
+}
+
+.vkz-status-text {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+}
+
+.vkz-confidence {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.vkz-verdict {
+    margin-top: 1.5rem;
+}
+
+.vkz-verdict-title {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.vkz-verdict-message {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.125rem;
+    line-height: 1.6;
+}
+
+/* URL Display */
+.vkz-url-display {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.vkz-url-display:hover {
+    border-color: rgba(0, 217, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.vkz-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.vkz-url-text {
+    color: var(--neon-blue);
+    word-break: break-all;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* Data Cards - Stacked Asymmetric */
+.vkz-data-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.vkz-micro-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.vkz-micro-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--neon-blue), 
+        transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.vkz-micro-card:hover {
+    border-color: rgba(0, 217, 255, 0.3);
+    transform: translateX(4px);
+    box-shadow: 
+        -4px 0 16px rgba(0, 217, 255, 0.2),
+        0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.vkz-micro-card:hover::after {
+    opacity: 1;
+}
+
+.vkz-card-highlight {
+    background: linear-gradient(135deg, 
+        rgba(0, 217, 255, 0.1), 
+        rgba(147, 51, 234, 0.1));
+    border-color: rgba(0, 217, 255, 0.3);
+}
+
+.vkz-card-highlight:hover {
+    background: linear-gradient(135deg, 
+        rgba(0, 217, 255, 0.15), 
+        rgba(147, 51, 234, 0.15));
+}
+
+.vkz-micro-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.vkz-icon-container {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 217, 255, 0.1);
+    border-radius: 8px;
+    color: var(--neon-blue);
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.vkz-micro-card:hover .vkz-icon-container {
+    background: rgba(0, 217, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.vkz-micro-value {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.vkz-micro-subtitle {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Micro Progress Bars */
+.vkz-micro-progress {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+}
+
+.vkz-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
+    border-radius: 2px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px var(--neon-blue);
+}
+
+/* Risk Indicator Bars */
+.vkz-risk-indicator {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.vkz-risk-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    transition: all 0.4s ease;
+}
+
+.vkz-risk-low {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    box-shadow: 0 0 8px #10b981;
+}
+
+.vkz-risk-medium {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    box-shadow: 0 0 8px #f59e0b;
+}
+
+.vkz-risk-high {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+    box-shadow: 0 0 8px #ef4444;
+}
+
+/* Action Buttons */
+.vkz-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fade-in-up 0.8s ease-out 0.4s both;
+}
+
+.vkz-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.vkz-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.vkz-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.vkz-btn-primary {
+    background: linear-gradient(135deg, var(--neon-blue), var(--electric-blue));
+    color: var(--void-black);
+    box-shadow: 0 4px 16px rgba(0, 217, 255, 0.4);
+}
+
+.vkz-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 217, 255, 0.6);
+}
+
+.vkz-btn-secondary {
+    background: rgba(147, 51, 234, 0.1);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    color: var(--neon-violet);
+}
+
+.vkz-btn-secondary:hover {
+    background: rgba(147, 51, 234, 0.2);
+    border-color: rgba(147, 51, 234, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Card Stagger Animation */
+.vkz-micro-card {
+    animation: slide-in-right 0.5s ease-out backwards;
+}
+
+.vkz-micro-card[data-card="ssl"] {
+    animation-delay: 0.1s;
+}
+
+.vkz-micro-card[data-card="domain"] {
+    animation-delay: 0.2s;
+}
+
+.vkz-micro-card[data-card="ai"] {
+    animation-delay: 0.3s;
+}
+
+.vkz-micro-card[data-card="risk"] {
+    animation-delay: 0.4s;
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .vkz-hero {
+        padding: var(--space-6);
+    }
+    
+    .vkz-title {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+    }
+    
+    .vkz-subtitle {
+        font-size: 1rem;
+    }
+    
+    .vkz-search-wrapper {
+        flex-direction: column;
+    }
+    
+    .vkz-scan-btn {
+        width: 100%;
+    }
+    
+    .vkz-logo {
+        max-width: 150px;
+    }
+    
+    .vkz-dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .liquid-metal-ring {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .vkz-status-icon {
+        font-size: 2.5rem;
+    }
+    
+    .vkz-confidence {
+        font-size: 2rem;
+    }
+    
+    .vkz-verdict-title {
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,147 @@
+# TrustLink Docker Compose - Full stack with Redis and load balancing
+version: '3.8'
+
+services:
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: trustlink-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - trustlink-network
+
+  # Celery broker (Redis)
+  celery-broker:
+    image: redis:7-alpine
+    container_name: trustlink-celery-broker
+    restart: unless-stopped
+    volumes:
+      - celery-broker-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - trustlink-network
+
+  # TrustLink Web Application (multiple instances for load balancing)
+  web1:
+    build: .
+    container_name: trustlink-web1
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://celery-broker:6379/1
+      - CELERY_RESULT_BACKEND=redis://celery-broker:6379/2
+      - DATABASE_PATH=/app/data/trustlink.db
+      - INSTANCE_ID=web1
+    volumes:
+      - app-data:/app/data
+      - app-logs:/app/logs
+    depends_on:
+      - redis
+      - celery-broker
+    networks:
+      - trustlink-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  web2:
+    build: .
+    container_name: trustlink-web2
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://celery-broker:6379/1
+      - CELERY_RESULT_BACKEND=redis://celery-broker:6379/2
+      - DATABASE_PATH=/app/data/trustlink.db
+      - INSTANCE_ID=web2
+    volumes:
+      - app-data:/app/data
+      - app-logs:/app/logs
+    depends_on:
+      - redis
+      - celery-broker
+    networks:
+      - trustlink-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Celery Worker for background tasks
+  celery-worker:
+    build: .
+    container_name: trustlink-celery-worker
+    restart: unless-stopped
+    command: celery -A task_queue.task_queue.celery_app worker --loglevel=info --concurrency=4
+    environment:
+      - FLASK_ENV=production
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://celery-broker:6379/1
+      - CELERY_RESULT_BACKEND=redis://celery-broker:6379/2
+      - DATABASE_PATH=/app/data/trustlink.db
+    volumes:
+      - app-data:/app/data
+      - app-logs:/app/logs
+    depends_on:
+      - redis
+      - celery-broker
+    networks:
+      - trustlink-network
+
+  # Nginx Load Balancer
+  nginx:
+    image: nginx:alpine
+    container_name: trustlink-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/app/static:ro
+      - nginx-cache:/var/cache/nginx
+    depends_on:
+      - web1
+      - web2
+    networks:
+      - trustlink-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis-data:
+    driver: local
+  celery-broker-data:
+    driver: local
+  app-data:
+    driver: local
+  app-logs:
+    driver: local
+  nginx-cache:
+    driver: local
+
+networks:
+  trustlink-network:
+    driver: bridge

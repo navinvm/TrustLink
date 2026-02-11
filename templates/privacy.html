@@ -1,0 +1,549 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy & Security - TrustLink{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/text-animations.css') }}">
+<style>
+    .privacy-hero {
+        text-align: center;
+        padding: 4rem 0 3rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        border-radius: 20px;
+        margin-bottom: 3rem;
+    }
+
+    .privacy-hero h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .privacy-hero .shield-icon {
+        font-size: 4rem;
+        color: #10b981;
+        margin-bottom: 1rem;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    .privacy-hero p {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+        color: #10b981;
+        margin: 3rem 0 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .subsection-title {
+        font-size: 1.6rem;
+        color: #06b6d4;
+        margin: 2rem 0 1rem;
+    }
+
+    .content-section {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .content-section p {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .guarantee-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .guarantee-card {
+        background: rgba(16, 185, 129, 0.05);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .guarantee-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(16, 185, 129, 0.5);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+    }
+
+    .guarantee-card .icon {
+        font-size: 2.5rem;
+        color: #10b981;
+        margin-bottom: 1rem;
+    }
+
+    .guarantee-card h3 {
+        color: #fff;
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .guarantee-card p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .data-table {
+        width: 100%;
+        margin: 2rem 0;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 2px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .data-table td {
+        padding: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .data-table tr:hover {
+        background: rgba(16, 185, 129, 0.05);
+    }
+
+    .info-box {
+        background: rgba(6, 182, 212, 0.1);
+        border-left: 4px solid #06b6d4;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 8px;
+    }
+
+    .info-box .icon {
+        color: #06b6d4;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+
+    .info-box p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+    }
+
+    .security-list {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0;
+    }
+
+    .security-list li {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-left: 3px solid #10b981;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+    }
+
+    .security-list li strong {
+        color: #10b981;
+    }
+
+    .timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #10b981, #06b6d4);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 60px;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 0;
+        width: 18px;
+        height: 18px;
+        background: #10b981;
+        border-radius: 50%;
+        border: 3px solid #0A0B1E;
+    }
+
+    .timeline-item h3 {
+        color: #10b981;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-item p {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+
+    .contact-box {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 3rem;
+    }
+
+    .contact-box h3 {
+        color: #10b981;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .contact-box p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-box a {
+        color: #06b6d4;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .contact-box a:hover {
+        color: #10b981;
+    }
+
+    @media (max-width: 768px) {
+        .privacy-hero h1 {
+            font-size: 2rem;
+        }
+
+        .guarantee-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
+    
+    <!-- Hero Section -->
+    <div class="privacy-hero">
+        <div class="shield-icon shield-pulse">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h1 class="fade-in-down stagger-1 glow-pulse">Privacy & Security</h1>
+        <p class="fade-in-up stagger-2">
+            Your privacy and security are our top priorities. Learn how we protect your data 
+            and ensure safe, transparent phishing detection.
+        </p>
+    </div>
+
+    <!-- Privacy Guarantees -->
+    <h2 class="section-title fade-in-up"><i class="fas fa-lock"></i> Our Privacy Guarantees</h2>
+    <div class="guarantee-grid">
+        <div class="guarantee-card scale-in stagger-1 hover-lift reveal">
+            <div class="icon"><i class="fas fa-user-shield"></i></div>
+            <h3>Anonymous Scanning</h3>
+            <p>URLs from anonymous users are processed in real-time and immediately discarded. We don't track or store your scans without an account.</p>
+        </div>
+
+        <div class="guarantee-card scale-in stagger-2 hover-lift reveal">
+            <div class="icon"><i class="fas fa-database"></i></div>
+            <h3>Minimal Data Collection</h3>
+            <p>We only collect what's necessary: URLs for scan history (registered users), account credentials, and basic analytics for service improvement.</p>
+        </div>
+
+        <div class="guarantee-card scale-in stagger-3 hover-lift reveal">
+            <div class="icon"><i class="fas fa-key"></i></div>
+            <h3>Strong Encryption</h3>
+            <p>All passwords are encrypted with bcrypt hashing. API keys are secured with industry-standard encryption. HTTPS enforced on all connections.</p>
+        </div>
+
+        <div class="guarantee-card scale-in stagger-4 hover-lift reveal">
+            <div class="icon"><i class="fas fa-ban"></i></div>
+            <h3>No Third-Party Sharing</h3>
+            <p>Your data is never sold, shared, or transferred to third parties for marketing or any other purposes. Your privacy is not for sale.</p>
+        </div>
+
+        <div class="guarantee-card scale-in stagger-5 hover-lift reveal">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <h3>Limited Retention</h3>
+            <p>Scan results are cached for 24 hours for performance. Scan history is retained only for registered users and deleted upon account deletion.</p>
+        </div>
+
+        <div class="guarantee-card scale-in stagger-6 hover-lift reveal">
+            <div class="icon"><i class="fas fa-user-times"></i></div>
+            <h3>Right to Delete</h3>
+            <p>You have full control over your data. Delete your account anytime, and all associated data will be permanently removed from our systems.</p>
+        </div>
+    </div>
+
+    <!-- What We Collect -->
+    <h2 class="section-title fade-in-up"><i class="fas fa-clipboard-list"></i> What Data We Collect</h2>
+    <div class="content-section fade-in-up stagger-1">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Data Type</th>
+                    <th>Purpose</th>
+                    <th>Retention</th>
+                    <th>Who Can Access</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>URLs (Registered Users)</strong></td>
+                    <td>Scan history, analytics, ML improvement</td>
+                    <td>Until account deletion</td>
+                    <td>User only</td>
+                </tr>
+                <tr>
+                    <td><strong>URLs (Anonymous)</strong></td>
+                    <td>Real-time scanning only</td>
+                    <td>Not stored (cache 24h)</td>
+                    <td>Nobody (discarded)</td>
+                </tr>
+                <tr>
+                    <td><strong>Email Address</strong></td>
+                    <td>Account authentication, notifications</td>
+                    <td>Until account deletion</td>
+                    <td>Admin (encrypted)</td>
+                </tr>
+                <tr>
+                    <td><strong>Username</strong></td>
+                    <td>Account identification</td>
+                    <td>Until account deletion</td>
+                    <td>User, Admin</td>
+                </tr>
+                <tr>
+                    <td><strong>Password</strong></td>
+                    <td>Account security</td>
+                    <td>Until changed/deleted</td>
+                    <td>Nobody (bcrypt hashed)</td>
+                </tr>
+                <tr>
+                    <td><strong>API Keys</strong></td>
+                    <td>API authentication</td>
+                    <td>Until revoked</td>
+                    <td>User only (hashed)</td>
+                </tr>
+                <tr>
+                    <td><strong>IP Address</strong></td>
+                    <td>Rate limiting, abuse prevention</td>
+                    <td>Not stored (session only)</td>
+                    <td>System only</td>
+                </tr>
+                <tr>
+                    <td><strong>Usage Analytics</strong></td>
+                    <td>Service improvement, statistics</td>
+                    <td>Aggregated, anonymized</td>
+                    <td>Admin (anonymized)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Security Measures -->
+    <h2 class="section-title fade-in-up"><i class="fas fa-shield-virus"></i> Security Measures</h2>
+    
+    <h3 class="subsection-title fade-in-left stagger-1">Application Security</h3>
+    <ul class="security-list">
+        <li><strong>CSRF Protection:</strong> All forms protected with CSRF tokens to prevent cross-site request forgery attacks.</li>
+        <li><strong>Input Validation:</strong> All user inputs are validated and sanitized to prevent SQL injection, XSS, and other injection attacks.</li>
+        <li><strong>Rate Limiting:</strong> API calls limited to 1000 requests per hour per user to prevent abuse and DDoS attacks.</li>
+        <li><strong>Secure Sessions:</strong> Session cookies are HTTP-only, secure, and use SameSite protection. Sessions expire after inactivity.</li>
+        <li><strong>Password Security:</strong> Bcrypt hashing with salt for all passwords. Minimum 8 characters, complexity requirements enforced.</li>
+        <li><strong>API Key Security:</strong> API keys are hashed using SHA-256. Keys can be revoked instantly by users.</li>
+    </ul>
+
+    <h3 class="subsection-title">Infrastructure Security</h3>
+    <ul class="security-list">
+        <li><strong>HTTPS Enforcement:</strong> All connections use TLS/SSL encryption. HTTP traffic is redirected to HTTPS.</li>
+        <li><strong>Database Encryption:</strong> Sensitive data encrypted at rest. Database files protected with file system permissions.</li>
+        <li><strong>Connection Pooling:</strong> Secure database connections managed through connection pooling to prevent connection exhaustion.</li>
+        <li><strong>Security Headers:</strong> X-Frame-Options, X-Content-Type-Options, and Content Security Policy headers enabled.</li>
+        <li><strong>Error Handling:</strong> Detailed errors hidden from users. Generic error messages prevent information leakage.</li>
+    </ul>
+
+    <h3 class="subsection-title">Monitoring & Response</h3>
+    <ul class="security-list">
+        <li><strong>Security Logging:</strong> Authentication failures, suspicious activities, and rate limit violations are logged.</li>
+        <li><strong>Health Checks:</strong> Automated monitoring of system health, database connectivity, and cache availability.</li>
+        <li><strong>Anomaly Detection:</strong> Unusual patterns in scan requests or authentication attempts trigger alerts.</li>
+        <li><strong>Incident Response:</strong> Security incidents are investigated and addressed within 24 hours.</li>
+    </ul>
+
+    <!-- How Your Data is Used -->
+    <h2 class="section-title"><i class="fas fa-tasks"></i> How We Use Your Data</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <h3>URL Scanning</h3>
+            <p>URLs you submit are analyzed by our ML model to detect phishing threats. For registered users, scan results are saved to your history for future reference.</p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>Service Improvement</h3>
+            <p>Aggregated, anonymized analytics help us improve detection accuracy, optimize performance, and identify new threat patterns.</p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>ML Model Training</h3>
+            <p>Our ML model is trained on publicly available phishing datasets. Individual URLs scanned are never linked to specific users in training data.</p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>Communication</h3>
+            <p>Email addresses are used for account verification, password resets, and optional security notifications. We never send marketing emails.</p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>Abuse Prevention</h3>
+            <p>IP addresses and rate limiting data are used temporarily to prevent spam, abuse, and automated attacks. This data is not stored long-term.</p>
+        </div>
+    </div>
+
+    <!-- Your Rights -->
+    <h2 class="section-title"><i class="fas fa-balance-scale"></i> Your Rights & Control</h2>
+    <div class="content-section">
+        <p>You have full control over your data. Here are your rights:</p>
+        
+        <div style="margin: 2rem 0;">
+            <h3 class="subsection-title">Access Your Data</h3>
+            <p>View your scan history, account details, and API keys anytime through your dashboard.</p>
+
+            <h3 class="subsection-title">Export Your Data</h3>
+            <p>Download your complete scan history in JSON format from your dashboard.</p>
+
+            <h3 class="subsection-title">Delete Your Data</h3>
+            <p>Delete individual scans, revoke API keys, or delete your entire account and all associated data permanently.</p>
+
+            <h3 class="subsection-title">Opt-Out</h3>
+            <p>Choose not to receive email notifications. Use anonymous scanning mode without logging in.</p>
+
+            <h3 class="subsection-title">Data Portability</h3>
+            <p>Export your data in standard formats (JSON) for use with other services.</p>
+        </div>
+    </div>
+
+    <!-- Third-Party Services -->
+    <h2 class="section-title"><i class="fas fa-plug"></i> Third-Party Services</h2>
+    <div class="content-section">
+        <p>TrustLink integrates with the following third-party services for enhanced phishing detection:</p>
+
+        <div style="margin: 2rem 0;">
+            <h3 class="subsection-title">Google Safe Browsing API (Optional)</h3>
+            <p>When enabled, URLs may be sent to Google Safe Browsing for verification. Google's privacy policy applies to this data. This service can be disabled in settings.</p>
+
+            <h3 class="subsection-title">VirusTotal API (Optional)</h3>
+            <p>When enabled, URLs may be checked against VirusTotal's database. VirusTotal's privacy policy applies. This service can be disabled in settings.</p>
+
+            <h3 class="subsection-title">Redis Cache (Optional)</h3>
+            <p>If Redis is configured, scan results may be cached in Redis for performance. Data is encrypted and expires after 24 hours.</p>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle icon"></i>
+            <p><strong>Note:</strong> External API calls are only made for registered users with consent. Anonymous scans use only our internal ML model unless explicitly opted in.</p>
+        </div>
+    </div>
+
+    <!-- Cookies & Tracking -->
+    <h2 class="section-title"><i class="fas fa-cookie-bite"></i> Cookies & Tracking</h2>
+    <div class="content-section">
+        <p>We use minimal cookies for essential functionality:</p>
+
+        <table class="data-table" style="margin-top: 1.5rem;">
+            <thead>
+                <tr>
+                    <th>Cookie Name</th>
+                    <th>Purpose</th>
+                    <th>Expiration</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>session</strong></td>
+                    <td>User authentication, login state</td>
+                    <td>Session / 30 days</td>
+                    <td>Essential</td>
+                </tr>
+                <tr>
+                    <td><strong>csrf_token</strong></td>
+                    <td>Security, CSRF protection</td>
+                    <td>Session</td>
+                    <td>Essential</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 1.5rem;"><strong>We do NOT use:</strong></p>
+        <ul style="color: rgba(255, 255, 255, 0.7); line-height: 1.8;">
+            <li>Advertising cookies</li>
+            <li>Third-party tracking cookies</li>
+            <li>Analytics cookies (Google Analytics, etc.)</li>
+            <li>Social media cookies</li>
+        </ul>
+    </div>
+
+    <!-- Updates to Policy -->
+    <h2 class="section-title"><i class="fas fa-sync-alt"></i> Policy Updates</h2>
+    <div class="content-section">
+        <p>We may update this privacy and security policy as our service evolves. Changes will be communicated through:</p>
+        <ul style="color: rgba(255, 255, 255, 0.7); line-height: 1.8; margin-top: 1rem;">
+            <li>Email notification to registered users (for major changes)</li>
+            <li>Notice on our website and dashboard</li>
+            <li>"Last Updated" date at the bottom of this page</li>
+        </ul>
+        <p style="margin-top: 1rem;">Continued use of TrustLink after policy updates constitutes acceptance of the new terms.</p>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-box">
+        <h3><i class="fas fa-envelope"></i> Questions or Concerns?</h3>
+        <p>If you have any questions about our privacy practices or security measures, please contact us:</p>
+        <p>
+            <strong>Email:</strong> <a href="mailto:privacy@trustlink.com">privacy@trustlink.com</a><br>
+            <strong>Security Issues:</strong> <a href="mailto:security@trustlink.com">security@trustlink.com</a>
+        </p>
+        <p style="margin-top: 1.5rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.6);">
+            <strong>Last Updated:</strong> February 8, 2026
+        </p>
+    </div>
+
+</div>
+{% endblock %}

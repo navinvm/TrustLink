@@ -1,0 +1,340 @@
+# Kubernetes Deployment Configuration for TrustLink
+# Supports horizontal pod autoscaling and load balancing
+
+---
+# ConfigMap for application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trustlink-config
+  namespace: trustlink
+data:
+  FLASK_ENV: "production"
+  REDIS_URL: "redis://trustlink-redis:6379/0"
+  CELERY_BROKER_URL: "redis://trustlink-redis:6379/1"
+  CELERY_RESULT_BACKEND: "redis://trustlink-redis:6379/2"
+
+---
+# Secret for sensitive data (create manually with actual values)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trustlink-secrets
+  namespace: trustlink
+type: Opaque
+data:
+  # Base64 encoded values - replace with actual secrets
+  # echo -n 'your-secret-key' | base64
+  FLASK_SECRET_KEY: YOUR_BASE64_ENCODED_SECRET_HERE
+
+---
+# Redis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trustlink-redis
+  namespace: trustlink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trustlink-redis
+  template:
+    metadata:
+      labels:
+        app: trustlink-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: trustlink-redis
+  namespace: trustlink
+spec:
+  selector:
+    app: trustlink-redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+  type: ClusterIP
+
+---
+# TrustLink Web Application Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trustlink-web
+  namespace: trustlink
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: trustlink-web
+  template:
+    metadata:
+      labels:
+        app: trustlink-web
+    spec:
+      containers:
+      - name: web
+        image: trustlink:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: trustlink-secrets
+              key: FLASK_SECRET_KEY
+        envFrom:
+        - configMapRef:
+            name: trustlink-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/data
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: trustlink-pvc
+
+---
+# TrustLink Web Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: trustlink-web
+  namespace: trustlink
+spec:
+  selector:
+    app: trustlink-web
+  ports:
+  - port: 80
+    targetPort: 5000
+  type: LoadBalancer
+
+---
+# Celery Worker Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trustlink-celery-worker
+  namespace: trustlink
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trustlink-celery-worker
+  template:
+    metadata:
+      labels:
+        app: trustlink-celery-worker
+    spec:
+      containers:
+      - name: celery-worker
+        image: trustlink:latest
+        command: ["celery"]
+        args: ["-A", "task_queue.task_queue.celery_app", "worker", "--loglevel=info", "--concurrency=4"]
+        envFrom:
+        - configMapRef:
+            name: trustlink-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/data
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: trustlink-pvc
+
+---
+# Horizontal Pod Autoscaler for Web
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: trustlink-web-hpa
+  namespace: trustlink
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: trustlink-web
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+
+---
+# Persistent Volume Claim for Redis
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: trustlink
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# Persistent Volume Claim for Application Data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: trustlink-pvc
+  namespace: trustlink
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+# Ingress for external access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trustlink-ingress
+  namespace: trustlink
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - trustlink.yourdomain.com
+    secretName: trustlink-tls
+  rules:
+  - host: trustlink.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trustlink-web
+            port:
+              number: 80
+
+---
+# NetworkPolicy for security
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: trustlink-network-policy
+  namespace: trustlink
+spec:
+  podSelector:
+    matchLabels:
+      app: trustlink-web
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx-ingress
+    ports:
+    - protocol: TCP
+      port: 5000
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: trustlink-redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
