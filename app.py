@@ -1570,15 +1570,23 @@ def api_batch_scan():
 
 @app.route('/health')
 def health():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'model_loaded': model is not None,
-        'vectorizer_loaded': vectorizer is not None,
-        'advanced_features': USE_ADVANCED_FEATURES,
-        'learning_system': USE_LEARNING_SYSTEM,
-        'version': '2.0'
-    })
+    """Health check endpoint for Railway/monitoring"""
+    try:
+        return jsonify({
+            'status': 'healthy',
+            'database': 'connected' if db is not None else 'unavailable',
+            'model_loaded': model is not None,
+            'vectorizer_loaded': vectorizer is not None,
+            'advanced_features': USE_ADVANCED_FEATURES,
+            'learning_system': USE_LEARNING_SYSTEM,
+            'platform': 'railway' if os.environ.get('RAILWAY_ENVIRONMENT') else 'other',
+            'version': '2.0'
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e)
+        }), 500
 
 
 @app.route('/api/v1/stats')
