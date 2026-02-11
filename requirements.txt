@@ -12,6 +12,7 @@ python-whois>=0.8.0
 Werkzeug>=2.0.0
 requests>=2.28.0
 APScheduler==3.10.4
+psutil>=5.9.0
 
 # AI Chatbot (supports both FREE Hugging Face and PAID OpenAI)
 # requests is already included above for Hugging Face
