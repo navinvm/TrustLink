@@ -1,0 +1,52 @@
+# Development files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests
+test_*.py
+*_test.py
+
+# Deployment configs for other platforms
+Dockerfile
+docker-compose.yml
+kubernetes-deployment.yaml
+Procfile
+railway.json
+gunicorn_config.py
+wsgi.py
+nginx.conf
+
+# Scripts
+*.bat
+*.sh
+start*.py
+run_*.py
+schedule_*.py
+train_*.py
+
+# Browser extension
+browser-extension/
+
+# Development dependencies
+requirements-dev.txt
+requirements-scalability.txt
+
+# Models directory - keep models for deployment
+# models/

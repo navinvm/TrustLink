@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.py",
+      "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "50mb"
@@ -12,11 +12,13 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "app.py"
+      "dest": "api/index.py"
     }
   ],
   "env": {
-    "FLASK_ENV": "production"
+    "FLASK_ENV": "production",
+    "PYTHONUNBUFFERED": "1",
+    "AUTO_ML_TRAINING": "false"
   },
-  "buildCommand": "pip install -r requirements.txt && python init_models.py"
+  "installCommand": "pip install -r requirements-vercel.txt"
 }
