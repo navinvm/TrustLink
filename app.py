@@ -94,18 +94,24 @@ except Exception as e:
     print("⚠️ Continuing with limited functionality")
     db = None
 
-# Use connection pool for database
+# Use connection pool for database (only for SQLite, not PostgreSQL)
 DATABASE_PATH = os.environ.get('DATABASE_PATH', 'trustlink.db')
-try:
-    db_pool = pool_manager.get_pool(DATABASE_PATH, pool_size=10, max_overflow=20)
-    
-    # Register pool health check
-    def check_db_pool():
-        return db_pool.healthcheck()
-    health_checker.register_check('database_pool', check_db_pool)
-    print("✓ Database connection pool initialized")
-except Exception as e:
-    print(f"⚠️ Database pool initialization failed: {e}")
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if not DATABASE_URL:  # Only use pool for SQLite
+    try:
+        db_pool = pool_manager.get_pool(DATABASE_PATH, pool_size=10, max_overflow=20)
+        
+        # Register pool health check
+        def check_db_pool():
+            return db_pool.healthcheck()
+        health_checker.register_check('database_pool', check_db_pool)
+        print("✓ Database connection pool initialized")
+    except Exception as e:
+        print(f"⚠️ Database pool initialization failed: {e}")
+        db_pool = None
+else:
+    print("✓ Using PostgreSQL - connection pooling handled by database layer")
     db_pool = None
 
 # Load the pre-trained model and vectorizer
