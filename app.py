@@ -81,20 +81,34 @@ def check_database():
 health_checker.register_check('database', check_database)
 
 # Initialize database with connection pooling
-db = Database()
+try:
+    db = Database()
+    print("✓ Database initialized successfully")
+except Exception as e:
+    print(f"⚠️ Database initialization failed: {e}")
+    print("⚠️ Continuing with limited functionality")
+    db = None
 
 # Use connection pool for database
 DATABASE_PATH = os.environ.get('DATABASE_PATH', 'trustlink.db')
-db_pool = pool_manager.get_pool(DATABASE_PATH, pool_size=10, max_overflow=20)
-
-# Register pool health check
-def check_db_pool():
-    return db_pool.healthcheck()
-health_checker.register_check('database_pool', check_db_pool)
+try:
+    db_pool = pool_manager.get_pool(DATABASE_PATH, pool_size=10, max_overflow=20)
+    
+    # Register pool health check
+    def check_db_pool():
+        return db_pool.healthcheck()
+    health_checker.register_check('database_pool', check_db_pool)
+    print("✓ Database connection pool initialized")
+except Exception as e:
+    print(f"⚠️ Database pool initialization failed: {e}")
+    db_pool = None
 
 # Load the pre-trained model and vectorizer
 # For serverless deployments, create models directory if it doesn't exist
-os.makedirs('models', exist_ok=True)
+try:
+    os.makedirs('models', exist_ok=True)
+except (OSError, PermissionError):
+    print("⚠️ Cannot create models directory (read-only filesystem)")
 
 try:
     model_path = 'models/model.pkl'
@@ -200,6 +214,8 @@ def login_required(f):
     """Decorator to require login for routes"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if db is None:
+            return jsonify({'error': 'Database not available in serverless mode'}), 503
         if 'user_id' not in session:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
@@ -210,6 +226,8 @@ def admin_required(f):
     """Decorator to require admin privileges"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if db is None:
+            return jsonify({'error': 'Database not available in serverless mode'}), 503
         if 'user_id' not in session:
             return redirect(url_for('login', next=request.url))
         

@@ -14,12 +14,33 @@ class Database:
     
     def __init__(self, db_path='trustlink.db'):
         self.db_path = db_path
+        self.is_serverless = self._detect_serverless()
         self.init_database()
+    
+    def _detect_serverless(self):
+        """Detect if running in serverless/read-only environment"""
+        import os
+        # Check for common serverless environment variables
+        if os.environ.get('VERCEL') or os.environ.get('AWS_LAMBDA_FUNCTION_NAME'):
+            return True
+        # Try to write a test file
+        try:
+            test_file = 'test_write.tmp'
+            with open(test_file, 'w') as f:
+                f.write('test')
+            os.remove(test_file)
+            return False
+        except (OSError, PermissionError):
+            return True
     
     @contextmanager
     def get_connection(self):
         """Context manager for database connections"""
-        conn = sqlite3.connect(self.db_path)
+        if self.is_serverless:
+            # Use in-memory database for serverless
+            conn = sqlite3.connect(':memory:')
+        else:
+            conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         try:
             yield conn
@@ -32,6 +53,18 @@ class Database:
     
     def init_database(self):
         """Initialize database tables"""
+        if self.is_serverless:
+            print("🔧 Serverless mode: Using in-memory database (data will not persist)")
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+        except Exception as e:
+            print(f"⚠️ Database initialization failed: {e}")
+            if self.is_serverless:
+                print("⚠️ Serverless mode - continuing without database")
+                return
+            raise
+        
         with self.get_connection() as conn:
             cursor = conn.cursor()
             
