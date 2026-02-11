@@ -9,13 +9,28 @@ from datetime import datetime
 
 
 # Configure logging
+# For serverless deployments, only use StreamHandler (no file writing)
+import sys
+log_handlers = [logging.StreamHandler(sys.stdout)]
+
+# Only add file handler if we have write permissions (not on serverless)
+try:
+    # Test if we can write to the filesystem
+    test_file = '.log_test'
+    with open(test_file, 'w') as f:
+        f.write('test')
+    import os
+    os.remove(test_file)
+    # If successful, add file handler
+    log_handlers.append(logging.FileHandler('trustlink.log'))
+    print("✓ File logging enabled")
+except (OSError, PermissionError, IOError):
+    print("⚠️ Read-only filesystem detected - using console logging only")
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('trustlink.log'),
-        logging.StreamHandler()
-    ]
+    handlers=log_handlers
 )
 
 logger = logging.getLogger('trustlink')

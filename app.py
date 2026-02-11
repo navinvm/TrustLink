@@ -93,12 +93,23 @@ def check_db_pool():
 health_checker.register_check('database_pool', check_db_pool)
 
 # Load the pre-trained model and vectorizer
+# For serverless deployments, create models directory if it doesn't exist
+os.makedirs('models', exist_ok=True)
+
 try:
-    with open('models/model.pkl', 'rb') as f:
-        model = pickle.load(f)
-    with open('models/vectorizer.pkl', 'rb') as f:
-        vectorizer = pickle.load(f)
-    print("✓ Model and vectorizer loaded successfully")
+    model_path = 'models/model.pkl'
+    vectorizer_path = 'models/vectorizer.pkl'
+    
+    if os.path.exists(model_path) and os.path.exists(vectorizer_path):
+        with open(model_path, 'rb') as f:
+            model = pickle.load(f)
+        with open(vectorizer_path, 'rb') as f:
+            vectorizer = pickle.load(f)
+        print("✓ Model and vectorizer loaded successfully")
+    else:
+        print("⚠ Model files not found - will train on first request or use fallback detection")
+        model = None
+        vectorizer = None
 except Exception as e:
     print(f"✗ Error loading model: {e}")
     model = None
@@ -372,10 +383,26 @@ def _categorize_url_length(url_length):
 def get_model_accuracy():
     """Get the current model accuracy from metrics file as percentage with % symbol"""
     try:
-        with open('model_metrics.json', 'r') as f:
-            metrics = json.load(f)
-            accuracy = round(metrics.get('accuracy', 0.85) * 100, 1)
-            return f"{accuracy}%"  # Return with % symbol
+        # Try to get from cache first (works on serverless)
+        if hasattr(cache, 'get'):
+            cached_accuracy = cache.get('model_accuracy')
+            if cached_accuracy:
+                accuracy = round(float(cached_accuracy) * 100, 1)
+                return f"{accuracy}%"
+        
+        # Try to read from file (only works on persistent storage)
+        try:
+            with open('model_metrics.json', 'r') as f:
+                metrics = json.load(f)
+                accuracy_val = metrics.get('accuracy', 0.85)
+                accuracy = round(accuracy_val * 100, 1)
+                # Cache it for next time
+                if hasattr(cache, 'set'):
+                    cache.set('model_accuracy', accuracy_val, timeout=3600)
+                return f"{accuracy}%"
+        except (FileNotFoundError, OSError, PermissionError):
+            # File doesn't exist or can't be read (serverless)
+            return "85.0%"
     except Exception as e:
         print(f"Warning: Could not load model metrics: {e}")
         # Fallback: return a conservative estimate
@@ -393,9 +420,20 @@ def save_model_metrics(accuracy, precision, recall, training_samples):
             'last_updated': datetime.now().isoformat(),
             'model_version': '2.0'
         }
-        with open('model_metrics.json', 'w') as f:
-            json.dump(metrics, f, indent=4)
-        print(f"✓ Model metrics saved: {accuracy:.1%} accuracy")
+        
+        # Cache in memory (works on serverless)
+        if hasattr(cache, 'set'):
+            cache.set('model_accuracy', accuracy, timeout=3600)
+            cache.set('model_metrics', metrics, timeout=3600)
+        
+        # Try to save to file (only works on persistent storage)
+        try:
+            with open('model_metrics.json', 'w') as f:
+                json.dump(metrics, f, indent=4)
+            print(f"✓ Model metrics saved to file: {accuracy:.1%} accuracy")
+        except (OSError, PermissionError):
+            print(f"✓ Model metrics cached (serverless mode): {accuracy:.1%} accuracy")
+        
         return True
     except Exception as e:
         print(f"✗ Error saving model metrics: {e}")

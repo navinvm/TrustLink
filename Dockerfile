@@ -26,6 +26,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY --chown=trustlink:trustlink . .
 
+# Initialize models during build
+RUN python init_models.py
+
 # Create necessary directories
 RUN mkdir -p /app/models /app/logs && \
     chown -R trustlink:trustlink /app
@@ -41,4 +44,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:5000/health || exit 1
 
 # Run application
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--worker-class", "gthread", "--worker-tmp-dir", "/dev/shm", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info", "app:app"]
+CMD ["gunicorn", "wsgi:application", "--config", "gunicorn_config.py", "--preload"]
