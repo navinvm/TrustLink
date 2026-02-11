@@ -12,6 +12,7 @@ import json
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
 from database import Database
+from unified_database import get_database, init_database
 from error_handlers import register_error_handlers, AppLogger
 from cache_manager import cache, cached, rate_limiter, session_store
 from database_pool import pool_manager
@@ -81,9 +82,13 @@ def check_database():
 health_checker.register_check('database', check_database)
 
 # Initialize database with connection pooling
+# Automatically uses PostgreSQL (Railway) or SQLite (local)
 try:
-    db = Database()
-    print("✓ Database initialized successfully")
+    db = init_database()
+    if db:
+        print("✓ Database initialized successfully")
+    else:
+        print("⚠️ Database not available - continuing with limited functionality")
 except Exception as e:
     print(f"⚠️ Database initialization failed: {e}")
     print("⚠️ Continuing with limited functionality")
