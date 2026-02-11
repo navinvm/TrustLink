@@ -1,24 +1,13 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api/index.py"
+      "source": "/(.*)",
+      "destination": "/api/index"
     }
   ],
   "env": {
     "FLASK_ENV": "production",
     "PYTHONUNBUFFERED": "1",
     "AUTO_ML_TRAINING": "false"
-  },
-  "installCommand": "pip install -r requirements-vercel.txt"
+  }
 }

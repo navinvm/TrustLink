@@ -28,7 +28,7 @@ except Exception as e:
     init_error = str(e)
     
     # Create a minimal error app
-    from flask import Flask, jsonify, request
+    from flask import Flask, jsonify, request as flask_request
     app = Flask(__name__)
     
     @app.route('/')
@@ -41,13 +41,5 @@ except Exception as e:
             'help': 'Check Vercel function logs for more information'
         }), 500
 
-# Vercel handler - must be named 'handler' or match the function name
-def handler(request):
-    """ASGI/WSGI handler for Vercel"""
-    with app.request_context(request.environ):
-        return app.full_dispatch_request()
-
-# Also export app directly for compatibility
-# Vercel will use whichever works
-if __name__ == "__main__":
-    print("⚠️ This module should be run by Vercel, not directly")
+# Export the app directly for Vercel (modern format)
+# Vercel will automatically detect and use this
