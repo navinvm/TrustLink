@@ -579,6 +579,511 @@ class RailwayDatabase:
 
         return verification_token
 
+    def create_admin_user(self, username, email, password):
+        """Create an admin user with email already verified"""
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO users (username, email, password_hash, email_verified, is_admin)
+                VALUES (%s, %s, %s, TRUE, TRUE)
+                RETURNING id
+            ''', (username, email, password_hash))
+            user_id = cursor.fetchone()[0]
+        return user_id
+
+    def update_daily_analytics(self, date, scans_delta=1, safe_delta=0, phishing_delta=0):
+        """Update daily analytics"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO analytics (metric_name, metric_value)
+                VALUES (%s, %s)
+            ''', (f'scans_{date}', scans_delta))
+
+    def add_feedback(self, scan_id, user_id, url, original_prediction, correct_label, feedback_type):
+        """Add user feedback for incorrect predictions"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS feedback (
+                    id SERIAL PRIMARY KEY,
+                    scan_id INTEGER,
+                    user_id INTEGER,
+                    url TEXT NOT NULL,
+                    original_prediction VARCHAR(50) NOT NULL,
+                    correct_label VARCHAR(50) NOT NULL,
+                    feedback_type VARCHAR(50) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_processed BOOLEAN DEFAULT FALSE
+                )
+            ''')
+            cursor.execute('''
+                INSERT INTO feedback
+                (scan_id, user_id, url, original_prediction, correct_label, feedback_type)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id
+            ''', (scan_id, user_id, url, original_prediction, correct_label, feedback_type))
+            return cursor.fetchone()[0]
+
+    def get_pending_feedback(self, limit=100):
+        """Get unprocessed feedback for model training"""
+        self._ensure_feedback_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM feedback
+                WHERE is_processed = FALSE
+                ORDER BY created_at ASC
+                LIMIT %s
+            ''', (limit,))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def mark_feedback_processed(self, feedback_ids):
+        """Mark feedback as processed after adding to training data"""
+        if not feedback_ids:
+            return
+        self._ensure_feedback_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                f'UPDATE feedback SET is_processed = TRUE WHERE id = ANY(%s)',
+                (list(feedback_ids),)
+            )
+
+    def get_all_feedback(self, only_unprocessed=False):
+        """Get all feedback from the database"""
+        self._ensure_feedback_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            if only_unprocessed:
+                cursor.execute('''
+                    SELECT id, url, original_prediction as predicted_label,
+                           CASE WHEN original_prediction = correct_label THEN 1 ELSE 0 END as is_correct,
+                           correct_label, feedback_type, created_at
+                    FROM feedback WHERE is_processed = FALSE ORDER BY created_at DESC
+                ''')
+            else:
+                cursor.execute('''
+                    SELECT id, url, original_prediction as predicted_label,
+                           CASE WHEN original_prediction = correct_label THEN 1 ELSE 0 END as is_correct,
+                           correct_label, feedback_type, created_at
+                    FROM feedback ORDER BY created_at DESC
+                ''')
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def _ensure_feedback_table(self):
+        """Ensure feedback table exists"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS feedback (
+                    id SERIAL PRIMARY KEY,
+                    scan_id INTEGER,
+                    user_id INTEGER,
+                    url TEXT NOT NULL,
+                    original_prediction VARCHAR(50) NOT NULL,
+                    correct_label VARCHAR(50) NOT NULL,
+                    feedback_type VARCHAR(50) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_processed BOOLEAN DEFAULT FALSE
+                )
+            ''')
+
+    def _ensure_ml_tables(self):
+        """Ensure ML-related tables exist"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS external_validations (
+                    id SERIAL PRIMARY KEY,
+                    url TEXT NOT NULL,
+                    url_hash VARCHAR(64) UNIQUE NOT NULL,
+                    is_threat BOOLEAN,
+                    confidence REAL,
+                    source VARCHAR(100) NOT NULL,
+                    threat_type VARCHAR(100),
+                    validated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    metadata TEXT
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS training_data (
+                    id SERIAL PRIMARY KEY,
+                    url TEXT NOT NULL,
+                    label INTEGER NOT NULL,
+                    confidence REAL,
+                    source VARCHAR(100) NOT NULL,
+                    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    used_in_training BOOLEAN DEFAULT FALSE,
+                    verified BOOLEAN DEFAULT FALSE
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS model_versions (
+                    id SERIAL PRIMARY KEY,
+                    version VARCHAR(100) NOT NULL,
+                    accuracy REAL,
+                    precision_score REAL,
+                    recall_score REAL,
+                    training_samples INTEGER,
+                    trained_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_active BOOLEAN DEFAULT FALSE,
+                    notes TEXT
+                )
+            ''')
+
+    def _ensure_whitelist_table(self):
+        """Ensure full whitelist table exists with all columns"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS whitelist (
+                    id SERIAL PRIMARY KEY,
+                    domain VARCHAR(255) UNIQUE NOT NULL,
+                    domain_type VARCHAR(50),
+                    category VARCHAR(100),
+                    description TEXT,
+                    added_by INTEGER,
+                    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    is_root_pattern BOOLEAN DEFAULT FALSE,
+                    verified BOOLEAN DEFAULT FALSE,
+                    reason TEXT,
+                    FOREIGN KEY (added_by) REFERENCES users (id)
+                )
+            ''')
+
+    def _ensure_chat_tables(self):
+        """Ensure chat history table exists"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS chat_history (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER,
+                    session_id VARCHAR(255) NOT NULL,
+                    role VARCHAR(50) NOT NULL,
+                    message TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    tokens_used INTEGER DEFAULT 0,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+
+    def add_external_validation(self, url, is_threat, confidence, source, threat_type=None, metadata=None):
+        """Store external validation results"""
+        self._ensure_ml_tables()
+        url_hash = hashlib.sha256(url.encode()).hexdigest()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO external_validations
+                (url, url_hash, is_threat, confidence, source, threat_type, metadata)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (url_hash) DO UPDATE SET
+                    is_threat = EXCLUDED.is_threat,
+                    confidence = EXCLUDED.confidence,
+                    source = EXCLUDED.source,
+                    threat_type = EXCLUDED.threat_type,
+                    validated_at = CURRENT_TIMESTAMP,
+                    metadata = EXCLUDED.metadata
+                RETURNING id
+            ''', (url, url_hash, is_threat, confidence, source, threat_type, str(metadata)))
+            return cursor.fetchone()[0]
+
+    def get_external_validation(self, url):
+        """Get cached external validation result for URL"""
+        self._ensure_ml_tables()
+        url_hash = hashlib.sha256(url.encode()).hexdigest()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM external_validations
+                WHERE url_hash = %s
+                ORDER BY validated_at DESC
+                LIMIT 1
+            ''', (url_hash,))
+            row = cursor.fetchone()
+            if row:
+                columns = [desc[0] for desc in cursor.description]
+                return dict(zip(columns, row))
+            return None
+
+    def add_training_data(self, url, label, confidence, source, verified=False):
+        """Add data to training pool"""
+        self._ensure_ml_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO training_data (url, label, confidence, source, verified)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING id
+            ''', (url, label, confidence, source, verified))
+            return cursor.fetchone()[0]
+
+    def get_training_data(self, min_confidence=0.7, verified_only=False, limit=1000):
+        """Get training data for model retraining"""
+        self._ensure_ml_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            query = '''SELECT url, label, confidence, source
+                       FROM training_data
+                       WHERE confidence >= %s AND used_in_training = FALSE'''
+            params = [min_confidence]
+            if verified_only:
+                query += ' AND verified = TRUE'
+            query += ' LIMIT %s'
+            params.append(limit)
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def mark_training_data_used(self, data_ids):
+        """Mark training data as used after retraining"""
+        if not data_ids:
+            return
+        self._ensure_ml_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                'UPDATE training_data SET used_in_training = TRUE WHERE id = ANY(%s)',
+                (list(data_ids),)
+            )
+
+    def add_model_version(self, version, accuracy, precision, recall, training_samples, notes=None):
+        """Record a new model version"""
+        self._ensure_ml_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('UPDATE model_versions SET is_active = FALSE')
+            cursor.execute('''
+                INSERT INTO model_versions
+                (version, accuracy, precision_score, recall_score, training_samples, is_active, notes)
+                VALUES (%s, %s, %s, %s, %s, TRUE, %s)
+                RETURNING id
+            ''', (version, accuracy, precision, recall, training_samples, notes))
+            return cursor.fetchone()[0]
+
+    def get_model_history(self, limit=10):
+        """Get model training history"""
+        self._ensure_ml_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM model_versions
+                ORDER BY trained_at DESC
+                LIMIT %s
+            ''', (limit,))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    # ========== Whitelist Management ==========
+
+    def add_whitelist_domain(self, domain, domain_type, category=None, description=None,
+                             added_by=None, is_root_pattern=False, verified=False):
+        """Add a domain to the custom whitelist"""
+        self._ensure_whitelist_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO whitelist
+                (domain, domain_type, category, description, added_by, is_root_pattern, verified)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+            ''', (domain, domain_type, category, description, added_by, is_root_pattern, verified))
+            return cursor.fetchone()[0]
+
+    def get_whitelist_domains(self, active_only=True, include_root_patterns=True):
+        """Get all whitelisted domains"""
+        self._ensure_whitelist_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            query = 'SELECT * FROM whitelist WHERE 1=1'
+            params = []
+            if active_only:
+                query += ' AND is_active = TRUE'
+            if not include_root_patterns:
+                query += ' AND is_root_pattern = FALSE'
+            query += ' ORDER BY domain'
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def get_whitelist_domain_by_id(self, whitelist_id):
+        """Get a specific whitelist entry by ID"""
+        self._ensure_whitelist_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM whitelist WHERE id = %s', (whitelist_id,))
+            row = cursor.fetchone()
+            if row:
+                columns = [desc[0] for desc in cursor.description]
+                return dict(zip(columns, row))
+            return None
+
+    def update_whitelist_domain(self, whitelist_id, **kwargs):
+        """Update a whitelist entry"""
+        self._ensure_whitelist_table()
+        allowed_fields = ['domain', 'domain_type', 'category', 'description',
+                          'is_active', 'is_root_pattern', 'verified']
+        updates = []
+        values = []
+        for field, value in kwargs.items():
+            if field in allowed_fields:
+                updates.append(f"{field} = %s")
+                values.append(value)
+        if not updates:
+            return False
+        values.append(whitelist_id)
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                f"UPDATE whitelist SET {', '.join(updates)} WHERE id = %s",
+                values
+            )
+            return cursor.rowcount > 0
+
+    def delete_whitelist_domain(self, whitelist_id):
+        """Delete a whitelist entry"""
+        self._ensure_whitelist_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM whitelist WHERE id = %s', (whitelist_id,))
+            return cursor.rowcount > 0
+
+    def deactivate_whitelist_domain(self, whitelist_id):
+        """Soft delete - deactivate a whitelist entry"""
+        return self.update_whitelist_domain(whitelist_id, is_active=False)
+
+    def search_whitelist(self, search_term):
+        """Search whitelist by domain or description"""
+        self._ensure_whitelist_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM whitelist
+                WHERE (domain ILIKE %s OR description ILIKE %s) AND is_active = TRUE
+                ORDER BY domain
+            ''', (f'%{search_term}%', f'%{search_term}%'))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def get_whitelist_stats(self):
+        """Get statistics about the whitelist"""
+        self._ensure_whitelist_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT COUNT(*) FROM whitelist WHERE is_active = TRUE')
+            total = cursor.fetchone()[0]
+            cursor.execute('''
+                SELECT category, COUNT(*) as count
+                FROM whitelist
+                WHERE is_active = TRUE
+                GROUP BY category
+                ORDER BY count DESC
+            ''')
+            by_category = [{'category': r[0], 'count': r[1]} for r in cursor.fetchall()]
+            cursor.execute('''
+                SELECT
+                    SUM(CASE WHEN is_root_pattern = TRUE THEN 1 ELSE 0 END) as root_patterns,
+                    SUM(CASE WHEN is_root_pattern = FALSE THEN 1 ELSE 0 END) as exact_domains
+                FROM whitelist WHERE is_active = TRUE
+            ''')
+            row = cursor.fetchone()
+            return {
+                'total': total,
+                'by_category': by_category,
+                'root_patterns': row[0] or 0,
+                'exact_domains': row[1] or 0
+            }
+
+    # ========== Chat History Methods ==========
+
+    def add_chat_message(self, user_id, session_id, role, message, tokens_used=0):
+        """Add a chat message to history"""
+        self._ensure_chat_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO chat_history (user_id, session_id, role, message, tokens_used)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING id
+            ''', (user_id, session_id, role, message, tokens_used))
+            return cursor.fetchone()[0]
+
+    def get_chat_history(self, session_id, limit=20):
+        """Get chat history for a session"""
+        self._ensure_chat_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT role, message, created_at FROM chat_history
+                WHERE session_id = %s
+                ORDER BY created_at DESC
+                LIMIT %s
+            ''', (session_id, limit))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            messages = [dict(zip(columns, row)) for row in rows]
+            return list(reversed(messages))
+
+    def get_user_chat_sessions(self, user_id, limit=10):
+        """Get recent chat sessions for a user"""
+        self._ensure_chat_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT session_id,
+                       MIN(created_at) as started_at,
+                       MAX(created_at) as last_message_at,
+                       COUNT(*) as message_count
+                FROM chat_history
+                WHERE user_id = %s
+                GROUP BY session_id
+                ORDER BY last_message_at DESC
+                LIMIT %s
+            ''', (user_id, limit))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def delete_chat_session(self, session_id, user_id):
+        """Delete a chat session"""
+        self._ensure_chat_tables()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                'DELETE FROM chat_history WHERE session_id = %s AND user_id = %s',
+                (session_id, user_id)
+            )
+            return cursor.rowcount > 0
+
     def get_analytics(self, days=30):
         """Get analytics for the last N days"""
         with self.get_connection() as conn:

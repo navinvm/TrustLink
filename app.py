@@ -644,9 +644,12 @@ def register():
             return render_template('register.html', error=str(ve), csrf_token=CSRFProtection.generate_token())
         except Exception as e:
             error_msg = str(e)
-            if 'UNIQUE constraint failed: users.username' in error_msg:
+            # Handle both SQLite and PostgreSQL unique constraint errors
+            if 'UNIQUE constraint failed: users.username' in error_msg or \
+               'duplicate key value violates unique constraint' in error_msg and 'username' in error_msg:
                 error_msg = 'Username already exists'
-            elif 'UNIQUE constraint failed: users.email' in error_msg:
+            elif 'UNIQUE constraint failed: users.email' in error_msg or \
+               'duplicate key value violates unique constraint' in error_msg and 'email' in error_msg:
                 error_msg = 'Email already registered'
             else:
                 error_msg = 'Registration failed. Please try again.'
@@ -2252,6 +2255,72 @@ def chat_status():
         'status': 'online' if is_enabled else 'offline',
         'message': 'AI Chatbot is ready' if is_enabled else 'AI Chatbot is disabled or not configured'
     })
+
+
+@app.route('/create-first-admin-2024')
+def create_first_admin():
+    """TEMPORARY: Create first admin account - DELETE THIS ROUTE AFTER USE!"""
+    
+    if not db:
+        return jsonify({'error': 'Database not available'}), 503
+    
+    try:
+        # Check if admin already exists
+        with db.get_connection() as conn:
+            cursor = conn.cursor()
+            if os.environ.get('DATABASE_URL'):
+                # PostgreSQL
+                cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = TRUE")
+            else:
+                # SQLite
+                cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = 1")
+            
+            result = cursor.fetchone()
+            admin_count = result[0] if result else 0
+            
+            if admin_count > 0:
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Admin already exists! DELETE THIS ROUTE NOW!'
+                }), 403
+        
+        # Create admin user
+        username = "admin"
+        email = "laguranav@gmail.com"
+        password = "admin1234"
+        
+        user_id = db.create_user(username, email, password)
+        
+        # Make them admin
+        with db.get_connection() as conn:
+            cursor = conn.cursor()
+            if os.environ.get('DATABASE_URL'):
+                # PostgreSQL
+                cursor.execute(
+                    'UPDATE users SET is_admin = TRUE, email_verified = TRUE WHERE id = %s',
+                    (user_id,)
+                )
+            else:
+                # SQLite
+                cursor.execute(
+                    'UPDATE users SET is_admin = 1, email_verified = 1 WHERE id = ?',
+                    (user_id,)
+                )
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Admin account created successfully!',
+            'username': username,
+            'email': email,
+            'password': password,
+            'warning': '⚠️ DELETE THIS ROUTE NOW! Remove /create-first-admin-2024 from app.py'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
 
 
 if __name__ == '__main__':
