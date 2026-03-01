@@ -30,18 +30,38 @@ def auto_create_admin():
             print("❌ Database not available for admin creation")
             return
 
-        # Check if any admin already exists
+        # Check if a verified admin already exists
         with db.get_connection() as conn:
             cursor = conn.cursor()
             try:
-                cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = TRUE")
+                cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = TRUE AND email_verified = TRUE")
             except Exception:
-                cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = 1")
+                cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = 1 AND email_verified = 1")
             result = cursor.fetchone()
-            admin_count = result[0] if result else 0
+            verified_admin_count = result[0] if result else 0
 
-        if admin_count > 0:
-            print("✓ Admin account already exists, skipping auto-creation")
+        if verified_admin_count > 0:
+            print("✓ Verified admin account already exists, skipping auto-creation")
+            return
+
+        # Fix any existing unverified admin accounts first
+        with db.get_connection() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    "UPDATE users SET email_verified = TRUE, is_admin = TRUE, is_active = TRUE WHERE username = %s",
+                    (username,)
+                )
+                fixed = cursor.rowcount
+            except Exception:
+                cursor.execute(
+                    "UPDATE users SET email_verified = 1, is_admin = 1, is_active = 1 WHERE username = ?",
+                    (username,)
+                )
+                fixed = cursor.rowcount
+
+        if fixed > 0:
+            print(f"✅ Fixed existing admin account: {username} (set email_verified=TRUE, is_admin=TRUE)")
             return
 
         # Create admin user (verified + admin from the start)
