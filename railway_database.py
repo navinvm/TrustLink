@@ -113,9 +113,11 @@ class RailwayDatabase:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS analytics (
                     id SERIAL PRIMARY KEY,
-                    metric_name VARCHAR(255) NOT NULL,
-                    metric_value REAL NOT NULL,
-                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    date DATE NOT NULL UNIQUE,
+                    total_scans INTEGER DEFAULT 0,
+                    safe_urls INTEGER DEFAULT 0,
+                    phishing_urls INTEGER DEFAULT 0,
+                    unique_users INTEGER DEFAULT 0
                 )
             ''')
             
@@ -316,9 +318,6 @@ class RailwayDatabase:
                 (key_id, user_id)
             )
     
-    def add_scan_record(self, user_id, url, prediction, confidence, risk_level, ip_address=None):
-        """Add a scan record to history (alias for add_scan_to_history)"""
-        return self.add_scan_to_history(user_id, url, prediction, confidence, risk_level, ip_address)
     
     def get_user_scan_history(self, user_id, limit=50, offset=0):
         """Get scan history for a user with pagination"""
@@ -601,14 +600,30 @@ class RailwayDatabase:
             user_id = cursor.fetchone()[0]
         return user_id
 
+    def add_scan_record(self, user_id, url, prediction, confidence, risk_level, ip_address=None):
+        """Add a scan record to history"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO scan_history (user_id, url, prediction, confidence, risk_level, ip_address)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id
+            ''', (user_id, url, prediction, confidence, risk_level, ip_address))
+            return cursor.fetchone()[0]
+
     def update_daily_analytics(self, date, scans_delta=1, safe_delta=0, phishing_delta=0):
         """Update daily analytics"""
         with self.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                INSERT INTO analytics (metric_name, metric_value)
-                VALUES (%s, %s)
-            ''', (f'scans_{date}', scans_delta))
+                INSERT INTO analytics (date, total_scans, safe_urls, phishing_urls)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (date) DO UPDATE SET
+                    total_scans = analytics.total_scans + %s,
+                    safe_urls = analytics.safe_urls + %s,
+                    phishing_urls = analytics.phishing_urls + %s
+            ''', (date, scans_delta, safe_delta, phishing_delta,
+                  scans_delta, safe_delta, phishing_delta))
 
     def add_feedback(self, scan_id, user_id, url, original_prediction, correct_label, feedback_type):
         """Add user feedback for incorrect predictions"""
