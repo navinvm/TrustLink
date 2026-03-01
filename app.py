@@ -475,7 +475,6 @@ def setup_admin():
     if not secret or secret != os.environ.get('SETUP_SECRET', ''):
         return jsonify({'error': 'unauthorized - set SETUP_SECRET env var and pass ?secret=value'}), 403
     try:
-        import hashlib
         admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
         admin_email = os.environ.get('ADMIN_EMAIL', '')
         admin_password = os.environ.get('ADMIN_PASSWORD', '')
@@ -483,7 +482,10 @@ def setup_admin():
         if not admin_password:
             return jsonify({'error': 'ADMIN_PASSWORD env var not set'}), 400
 
-        password_hash = hashlib.sha256(admin_password.encode()).hexdigest()
+        # Use same PBKDF2 hashing as database.py
+        import hashlib
+        salt = hashlib.sha256(admin_password.encode()).hexdigest()[:16]
+        password_hash = hashlib.pbkdf2_hmac('sha256', admin_password.encode(), salt.encode(), 100000).hex()
 
         with db.get_connection() as conn:
             cursor = conn.cursor()

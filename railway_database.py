@@ -131,10 +131,19 @@ class RailwayDatabase:
                 )
             ''')
     
+    def _hash_password(self, password):
+        """Hash password using PBKDF2 - must match database.py"""
+        salt = hashlib.sha256(password.encode()).hexdigest()[:16]
+        return hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000).hex()
+
+    def _verify_password(self, password, password_hash):
+        """Verify password against hash"""
+        return self._hash_password(password) == password_hash
+
     # User management methods
     def create_user(self, username, email, password):
         """Create a new user with email verification"""
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        password_hash = self._hash_password(password)
         verification_token = secrets.token_urlsafe(32)
         expires = datetime.now() + timedelta(hours=24)
         
@@ -190,8 +199,7 @@ class RailwayDatabase:
             user = dict(zip(columns, row))
             
             # Verify password
-            password_hash = hashlib.sha256(password.encode()).hexdigest()
-            if user['password_hash'] != password_hash:
+            if not self._verify_password(password, user['password_hash']):
                 return None
             
             # Check if email is verified
@@ -215,9 +223,7 @@ class RailwayDatabase:
         user = self.get_user_by_username(username)
         if not user:
             return False
-        
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
-        return user['password_hash'] == password_hash
+        return self._verify_password(password, user['password_hash'])
     
     def add_scan_to_history(self, user_id, url, prediction, confidence, risk_level, ip_address=None):
         """Add scan to history"""
@@ -528,7 +534,7 @@ class RailwayDatabase:
         if not token_data:
             return False
 
-        new_password_hash = hashlib.sha256(new_password.encode()).hexdigest()
+        new_password_hash = self._hash_password(new_password)
 
         with self.get_connection() as conn:
             cursor = conn.cursor()
@@ -583,7 +589,7 @@ class RailwayDatabase:
 
     def create_admin_user(self, username, email, password):
         """Create an admin user with email already verified"""
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        password_hash = self._hash_password(password)
 
         with self.get_connection() as conn:
             cursor = conn.cursor()
