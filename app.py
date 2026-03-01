@@ -118,6 +118,41 @@ try:
 except (OSError, PermissionError):
     print("⚠️ Cannot create models directory (read-only filesystem)")
 
+def _load_model_from_db():
+    """Try to load model from PostgreSQL database"""
+    try:
+        if db and hasattr(db, 'load_model_from_db'):
+            model_row = db.load_model_from_db('model')
+            vectorizer_row = db.load_model_from_db('vectorizer')
+            if model_row and vectorizer_row:
+                import io
+                m = pickle.load(io.BytesIO(model_row['model_data']))
+                v = pickle.load(io.BytesIO(vectorizer_row['model_data']))
+                print(f"✓ Model loaded from PostgreSQL (accuracy: {model_row.get('accuracy', 'N/A')})")
+                return m, v
+    except Exception as e:
+        print(f"⚠ Could not load model from DB: {e}")
+    return None, None
+
+
+def save_model_to_db(model_obj, vectorizer_obj, accuracy=None, training_samples=None):
+    """Save model to PostgreSQL database for persistence across redeploys"""
+    try:
+        if db and hasattr(db, 'save_model_to_db'):
+            import io
+            model_buf = io.BytesIO()
+            pickle.dump(model_obj, model_buf)
+            vectorizer_buf = io.BytesIO()
+            pickle.dump(vectorizer_obj, vectorizer_buf)
+            db.save_model_to_db('model', model_buf.getvalue(), accuracy, training_samples)
+            db.save_model_to_db('vectorizer', vectorizer_buf.getvalue(), accuracy, training_samples)
+            print(f"✓ Model saved to PostgreSQL (accuracy: {accuracy})")
+            return True
+    except Exception as e:
+        print(f"⚠ Could not save model to DB: {e}")
+    return False
+
+
 try:
     model_path = 'models/model.pkl'
     vectorizer_path = 'models/vectorizer.pkl'
@@ -127,15 +162,18 @@ try:
             model = pickle.load(f)
         with open(vectorizer_path, 'rb') as f:
             vectorizer = pickle.load(f)
-        print("✓ Model and vectorizer loaded successfully")
+        print("✓ Model and vectorizer loaded from file")
+        # Also save to DB for future deploys
+        save_model_to_db(model, vectorizer)
     else:
-        print("⚠ Model files not found - will train on first request or use fallback detection")
-        model = None
-        vectorizer = None
+        # Try loading from PostgreSQL database
+        model, vectorizer = _load_model_from_db()
+        if not model:
+            print("⚠ No model found - using rule-based fallback detection")
 except Exception as e:
     print(f"✗ Error loading model: {e}")
-    model = None
-    vectorizer = None
+    # Try DB as fallback
+    model, vectorizer = _load_model_from_db()
 
 # Try to import advanced feature extractor (optional)
 try:

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%); min-height: 100vh; padding: 2rem 1rem;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <!-- Header Section -->
+        <div style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <a href="{{ url_for('admin_dashboard') }}" style="
+                    padding: 0.5rem 1rem;
+                    background: rgba(102, 126, 234, 0.15);
+                    color: #667eea;
+                    text-decoration: none;
+                    border-radius: 0.375rem;
+                    border: 1px solid rgba(102, 126, 234, 0.3);
+                    font-size: 0.875rem;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    display: inline-block;
+                " onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.borderColor='rgba(102, 126, 234, 0.5)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.borderColor='rgba(102, 126, 234, 0.3)'">
+                    ← Back to Dashboard
+                </a>
+            </div>
+            
+            <h1 style="color: #ffffff; margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 700;">User Management</h1>
+            <p style="color: rgba(255, 255, 255, 0.6); margin: 0; font-size: 0.95rem;">Manage and view all system users</p>
+        </div>
+
+        <!-- Users Table Card -->
+        <div style="
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        ">
+            {% if users %}
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(102, 126, 234, 0.3);">
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: left;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">ID</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: left;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Username</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: left;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Email</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: center;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Verified</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: center;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Admin</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: center;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Active</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: left;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Joined</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: center;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Scans</th>
+                                <th style="
+                                    padding: 1rem;
+                                    text-align: center;
+                                    color: #667eea;
+                                    font-weight: 600;
+                                    font-size: 0.85rem;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                ">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                                <tr style="
+                                    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+                                    transition: background-color 0.2s ease;
+                                " onmouseover="this.style.backgroundColor='rgba(102, 126, 234, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                    <td style="padding: 1rem; color: #ffffff; font-family: monospace; font-size: 0.85rem;">{{ u.id }}</td>
+                                    <td style="padding: 1rem; color: #ffffff; font-weight: 500;">{{ u.username }}</td>
+                                    <td style="padding: 1rem; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">{{ u.email }}</td>
+                                    <td style="padding: 1rem; color: rgba(255, 255, 255, 0.8); text-align: center;">
+                                        <span style="
+                                            display: inline-block;
+                                            width: 24px;
+                                            height: 24px;
+                                            border-radius: 50%;
+                                            background: {% if u.email_verified %}#10b981{% else %}#ef4444{% endif %};
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 0.7rem;
+                                            font-weight: bold;
+                                        ">{{ '✓' if u.email_verified else '✗' }}</span>
+                                    </td>
+                                    <td style="padding: 1rem; color: rgba(255, 255, 255, 0.8); text-align: center;">
+                                        <span style="
+                                            display: inline-block;
+                                            width: 24px;
+                                            height: 24px;
+                                            border-radius: 50%;
+                                            background: {% if u.is_admin %}#667eea{% else %}rgba(255, 255, 255, 0.1){% endif %};
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 0.7rem;
+                                            font-weight: bold;
+                                        ">{{ '✓' if u.is_admin else '·' }}</span>
+                                    </td>
+                                    <td style="padding: 1rem; color: rgba(255, 255, 255, 0.8); text-align: center;">
+                                        <span style="
+                                            display: inline-block;
+                                            width: 24px;
+                                            height: 24px;
+                                            border-radius: 50%;
+                                            background: {% if u.is_active %}#10b981{% else %}#ef4444{% endif %};
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 0.7rem;
+                                            font-weight: bold;
+                                        ">{{ '✓' if u.is_active else '✗' }}</span>
+                                    </td>
+                                    <td style="padding: 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+                                        {% if u.created_at %}
+                                            {{ u.created_at.strftime('%Y-%m-%d') if u.created_at.strftime else u.created_at }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td style="padding: 1rem; color: rgba(255, 255, 255, 0.8); text-align: center; font-weight: 500;">{{ u.scan_count }}</td>
+                                    <td style="padding: 1rem; text-align: center;">
+                                        <a href="{{ url_for('admin_user_details', user_id=u.id) }}" style="
+                                            padding: 0.4rem 0.8rem;
+                                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                            color: #ffffff;
+                                            text-decoration: none;
+                                            border-radius: 0.375rem;
+                                            font-size: 0.85rem;
+                                            font-weight: 500;
+                                            transition: all 0.3s ease;
+                                            display: inline-block;
+                                            border: none;
+                                            cursor: pointer;
+                                        " onmouseover="this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Section -->
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 1rem;
+                    margin-top: 2rem;
+                    padding-top: 2rem;
+                    border-top: 1px solid rgba(102, 126, 234, 0.2);
+                ">
+                    {% if page > 1 %}
+                        <a href="{{ url_for(request.endpoint, page=page-1) }}" style="
+                            padding: 0.6rem 1.2rem;
+                            background: rgba(102, 126, 234, 0.15);
+                            color: #667eea;
+                            text-decoration: none;
+                            border-radius: 0.375rem;
+                            border: 1px solid rgba(102, 126, 234, 0.3);
+                            font-weight: 500;
+                            transition: all 0.3s ease;
+                            cursor: pointer;
+                        " onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.borderColor='rgba(102, 126, 234, 0.5)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.borderColor='rgba(102, 126, 234, 0.3)'">
+                            ← Previous
+                        </a>
+                    {% endif %}
+
+                    <span style="color: rgba(255, 255, 255, 0.7); font-weight: 500;">
+                        Page <span style="color: #667eea; font-weight: 700;">{{ page }}</span>
+                    </span>
+
+                    {% if users|length >= 20 %}
+                        <a href="{{ url_for(request.endpoint, page=page+1) }}" style="
+                            padding: 0.6rem 1.2rem;
+                            background: rgba(102, 126, 234, 0.15);
+                            color: #667eea;
+                            text-decoration: none;
+                            border-radius: 0.375rem;
+                            border: 1px solid rgba(102, 126, 234, 0.3);
+                            font-weight: 500;
+                            transition: all 0.3s ease;
+                            cursor: pointer;
+                        " onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.borderColor='rgba(102, 126, 234, 0.5)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.borderColor='rgba(102, 126, 234, 0.3)'">
+                            Next →
+                        </a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div style="
+                    text-align: center;
+                    padding: 3rem 2rem;
+                    color: rgba(255, 255, 255, 0.6);
+                ">
+                    <p style="font-size: 1.1rem; margin: 0;">No users found</p>
+                    <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0;">Try adjusting your search or filters</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer Info -->
+        <div style="margin-top: 1.5rem; text-align: right; color: rgba(255, 255, 255, 0.5); font-size: 0.85rem;">
+            <p style="margin: 0;">Logged in as: <span style="color: #667eea; font-weight: 600;">{{ user.username }}</span></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

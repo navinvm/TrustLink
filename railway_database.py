@@ -1092,6 +1092,64 @@ class RailwayDatabase:
             )
             return cursor.rowcount > 0
 
+    # ========== ML Model Storage in PostgreSQL ==========
+
+    def _ensure_model_table(self):
+        """Ensure model storage table exists"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS ml_models (
+                    id SERIAL PRIMARY KEY,
+                    model_name VARCHAR(100) NOT NULL,
+                    model_data BYTEA NOT NULL,
+                    accuracy REAL,
+                    training_samples INTEGER,
+                    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_active BOOLEAN DEFAULT TRUE
+                )
+            ''')
+
+    def save_model_to_db(self, model_name, model_bytes, accuracy=None, training_samples=None):
+        """Save ML model binary to PostgreSQL"""
+        self._ensure_model_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            # Deactivate old versions
+            cursor.execute(
+                'UPDATE ml_models SET is_active = FALSE WHERE model_name = %s',
+                (model_name,)
+            )
+            # Save new version
+            cursor.execute('''
+                INSERT INTO ml_models (model_name, model_data, accuracy, training_samples, is_active)
+                VALUES (%s, %s, %s, %s, TRUE)
+                RETURNING id
+            ''', (model_name, psycopg2.Binary(model_bytes), accuracy, training_samples))
+            return cursor.fetchone()[0]
+
+    def load_model_from_db(self, model_name):
+        """Load ML model binary from PostgreSQL"""
+        self._ensure_model_table()
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT model_data, accuracy, training_samples, saved_at
+                FROM ml_models
+                WHERE model_name = %s AND is_active = TRUE
+                ORDER BY saved_at DESC
+                LIMIT 1
+            ''', (model_name,))
+            row = cursor.fetchone()
+            if row:
+                return {
+                    'model_data': bytes(row[0]),
+                    'accuracy': row[1],
+                    'training_samples': row[2],
+                    'saved_at': row[3]
+                }
+            return None
+
     def get_analytics(self, days=30):
         """Get analytics for the last N days"""
         with self.get_connection() as conn:
