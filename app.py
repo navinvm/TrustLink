@@ -469,6 +469,37 @@ def save_model_metrics(accuracy, precision, recall, training_samples):
         return False
 
 
+# ========== Temporary Admin Fix Route ==========
+
+@app.route('/fix-admin-account')
+def fix_admin_account():
+    """One-time route to fix admin account - only works if FIX_ADMIN env var is set"""
+    fix_key = os.environ.get('FIX_ADMIN')
+    if not fix_key:
+        return jsonify({'error': 'Not authorized'}), 403
+
+    key_provided = request.args.get('key')
+    if key_provided != fix_key:
+        return jsonify({'error': 'Invalid key'}), 403
+
+    try:
+        admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+        with db.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users
+                SET email_verified = TRUE, is_admin = TRUE, is_active = TRUE
+                WHERE username = %s
+            ''', (admin_username,))
+            affected = cursor.rowcount
+        if affected:
+            return jsonify({'success': True, 'message': f'Admin account "{admin_username}" fixed! You can now log in.'})
+        else:
+            return jsonify({'error': f'No user found with username "{admin_username}"'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 # ========== Public Routes ==========
 
 @app.route('/')
