@@ -1464,13 +1464,8 @@ def predict():
             else:
                 risk_level = 'high'
         
-        # Add realistic scan timing (4-5 seconds for new URLs)
-        # Calculate how much time has elapsed
-        elapsed_time = time.time() - scan_start_time
-        # If scan was too fast, add delay to reach 4-5 seconds
-        target_scan_time = random.uniform(4.0, 5.0)
-        if elapsed_time < target_scan_time:
-            time.sleep(target_scan_time - elapsed_time)
+        # Note: Artificial scan delay removed for Railway compatibility
+        # The JS frontend handles timing display independently
         
         # Build comprehensive response with enhanced details
         response = {

@@ -48,6 +48,16 @@ class RailwayDatabase:
         """Initialize PostgreSQL database tables"""
         with self.get_connection() as conn:
             cursor = conn.cursor()
+
+            # Fix analytics table if it has old schema (metric_name/metric_value)
+            cursor.execute("""
+                SELECT column_name FROM information_schema.columns
+                WHERE table_name = 'analytics' AND column_name = 'metric_name'
+            """)
+            if cursor.fetchone():
+                print("⚠️ Migrating analytics table to new schema...")
+                cursor.execute('DROP TABLE analytics')
+            
             
             # Users table
             cursor.execute('''
