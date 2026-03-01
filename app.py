@@ -1196,7 +1196,7 @@ def predict():
             # Skip external validation for whitelisted domains - trust the whitelist
             is_phishing = False
             confidence = 0.95
-        else:
+        elif model is not None and vectorizer is not None:
             # Prepare for prediction (vectorize the URL)
             X = vectorizer.transform([features['url']])
             
@@ -1219,7 +1219,20 @@ def predict():
             else:
                 variance = random.uniform(-0.05, 0.05)
             confidence_ml = max(0.55, min(0.94, confidence_ml + variance))
-        
+        else:
+            # No ML model available - use rule-based fallback detection
+            print("⚠️ No ML model - using rule-based fallback detection")
+            risk_score = 0
+            if features.get('has_ip_address'): risk_score += 3
+            if features.get('has_suspicious_tld'): risk_score += 2
+            if features.get('has_login_keywords'): risk_score += 2
+            if features.get('url_length', 0) > 100: risk_score += 1
+            if features.get('num_dots', 0) > 5: risk_score += 1
+            if features.get('has_at_symbol'): risk_score += 2
+            if features.get('has_double_slash'): risk_score += 1
+            is_phishing_ml = risk_score >= 3
+            confidence_ml = min(0.5 + (risk_score * 0.07), 0.92)
+
         # Get external verifier validation (only for non-whitelisted domains)
         verifier_result = None
         if not is_whitelisted:
