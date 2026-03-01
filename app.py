@@ -466,6 +466,62 @@ def save_model_metrics(accuracy, precision, recall, training_samples):
         return False
 
 
+# ========== Debug Route (temporary) ==========
+
+@app.route('/setup-admin')
+def setup_admin():
+    """One-time admin setup route - fixes or creates admin account"""
+    secret = request.args.get('secret')
+    if not secret or secret != os.environ.get('SETUP_SECRET', ''):
+        return jsonify({'error': 'unauthorized - set SETUP_SECRET env var and pass ?secret=value'}), 403
+    try:
+        import hashlib
+        admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+        admin_email = os.environ.get('ADMIN_EMAIL', '')
+        admin_password = os.environ.get('ADMIN_PASSWORD', '')
+
+        if not admin_password:
+            return jsonify({'error': 'ADMIN_PASSWORD env var not set'}), 400
+
+        password_hash = hashlib.sha256(admin_password.encode()).hexdigest()
+
+        with db.get_connection() as conn:
+            cursor = conn.cursor()
+            # Check if user exists
+            cursor.execute('SELECT id, username, email_verified, is_admin FROM users WHERE username = %s', (admin_username,))
+            row = cursor.fetchone()
+
+            if row:
+                columns = [desc[0] for desc in cursor.description]
+                existing = dict(zip(columns, row))
+                # Update password + fix flags
+                cursor.execute('''
+                    UPDATE users
+                    SET password_hash = %s, email_verified = TRUE, is_admin = TRUE, is_active = TRUE
+                    WHERE username = %s
+                ''', (password_hash, admin_username))
+                return jsonify({
+                    'action': 'fixed',
+                    'user': existing,
+                    'message': f'Admin "{admin_username}" fixed! Password reset + email verified + is_admin=TRUE. Try logging in now.'
+                })
+            else:
+                # Create fresh admin
+                cursor.execute('''
+                    INSERT INTO users (username, email, password_hash, email_verified, is_admin, is_active)
+                    VALUES (%s, %s, %s, TRUE, TRUE, TRUE)
+                    RETURNING id
+                ''', (admin_username, admin_email, password_hash))
+                user_id = cursor.fetchone()[0]
+                return jsonify({
+                    'action': 'created',
+                    'user_id': user_id,
+                    'message': f'Admin "{admin_username}" created! Try logging in now.'
+                })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 # ========== Public Routes ==========
 
 @app.route('/')
