@@ -34,7 +34,7 @@ if (scanForm) {
         try {
             // Make API call
             console.log('Sending scan request for:', url);
-            const response = await fetch('/api/scan', {
+            const response = await fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
