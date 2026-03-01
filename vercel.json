@@ -8,6 +8,12 @@
   "env": {
     "FLASK_ENV": "production",
     "PYTHONUNBUFFERED": "1",
-    "AUTO_ML_TRAINING": "false"
+    "AUTO_ML_TRAINING": "false",
+    "SESSION_COOKIE_SECURE": "true",
+    "SESSION_COOKIE_HTTPONLY": "true",
+    "SESSION_COOKIE_SAMESITE": "Lax",
+    "RATE_LIMIT_ENABLED": "true",
+    "METRICS_ENABLED": "true",
+    "HEALTH_CHECK_ENABLED": "true"
   }
 }

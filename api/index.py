@@ -20,6 +20,15 @@ try:
     print("🔧 Initializing TrustLink in Vercel serverless mode...")
     from app import app as flask_app
     app = flask_app
+
+    # Auto-create admin account if configured
+    if os.environ.get('AUTO_CREATE_ADMIN', '').lower() == 'true':
+        try:
+            import create_admin_on_startup
+            create_admin_on_startup.auto_create_admin()
+        except Exception as admin_err:
+            print(f"⚠️ Admin creation skipped: {admin_err}")
+
     print("✓ TrustLink initialized successfully")
 except Exception as e:
     print(f"❌ Error importing app: {e}")

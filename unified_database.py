@@ -16,7 +16,8 @@ def get_database():
         Database instance (SQLite, PostgreSQL, or in-memory)
     """
     # Check if PostgreSQL connection is available
-    database_url = os.environ.get('DATABASE_URL')
+    # Support both DATABASE_URL and Vercel's POSTGRES_URL
+    database_url = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL') or os.environ.get('POSTGRES_PRISMA_URL')
     
     if database_url:
         # Use PostgreSQL for Railway or Vercel connecting to Railway
