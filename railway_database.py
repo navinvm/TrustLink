@@ -15,19 +15,12 @@ class RailwayDatabase:
     """PostgreSQL Database manager for Railway deployment"""
     
     def __init__(self):
-        # Support both Railway's DATABASE_URL and Vercel's POSTGRES_URL
-        self.database_url = (
-            os.environ.get('DATABASE_URL') or
-            os.environ.get('POSTGRES_URL') or
-            os.environ.get('POSTGRES_PRISMA_URL')
-        )
-        
+        # Support Vercel Postgres, Railway, and any other PostgreSQL provider
+        from unified_database import get_database_url
+        self.database_url = get_database_url()
+
         if not self.database_url:
-            raise ValueError("No PostgreSQL URL found. Set DATABASE_URL or POSTGRES_URL.")
-        
-        # Vercel Postgres uses postgres:// but psycopg2 needs postgresql://
-        if self.database_url.startswith('postgres://'):
-            self.database_url = self.database_url.replace('postgres://', 'postgresql://', 1)
+            raise ValueError("No PostgreSQL URL found. Set DATABASE_URL or POSTGRES_URL in environment variables.")
         
         # Create connection pool
         self.pool = psycopg2.pool.SimpleConnectionPool(

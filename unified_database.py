@@ -1,27 +1,34 @@
 """
 Unified Database Configuration
-Automatically uses the right database for each platform:
-- Railway: PostgreSQL (with DATABASE_URL)
-- Vercel: Remote PostgreSQL connection to Railway
-- Local: SQLite
+Automatically uses PostgreSQL if available, otherwise SQLite for local dev.
+Supports: Vercel Postgres (POSTGRES_URL), Railway (DATABASE_URL), Local (SQLite)
 """
 import os
 
 
+def get_database_url():
+    """Get the PostgreSQL URL from any known environment variable"""
+    url = (
+        os.environ.get('DATABASE_URL') or
+        os.environ.get('POSTGRES_URL') or
+        os.environ.get('POSTGRES_PRISMA_URL') or
+        os.environ.get('POSTGRES_URL_NON_POOLING')
+    )
+    # psycopg2 requires postgresql:// not postgres://
+    if url and url.startswith('postgres://'):
+        url = url.replace('postgres://', 'postgresql://', 1)
+    return url
+
+
 def get_database():
     """
-    Get the appropriate database instance based on environment
-    
-    Returns:
-        Database instance (SQLite, PostgreSQL, or in-memory)
+    Get the appropriate database instance based on environment.
+    Returns PostgreSQL if any postgres URL is found, otherwise SQLite.
     """
-    # Check if PostgreSQL connection is available
-    # Support both DATABASE_URL and Vercel's POSTGRES_URL
-    database_url = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL') or os.environ.get('POSTGRES_PRISMA_URL')
-    
+    database_url = get_database_url()
+
     if database_url:
-        # Use PostgreSQL for Railway or Vercel connecting to Railway
-        print("🐘 Using PostgreSQL database (Railway)")
+        print("🐘 Using PostgreSQL database")
         try:
             from railway_database import RailwayDatabase
             return RailwayDatabase()
@@ -30,14 +37,14 @@ def get_database():
             print("⚠️ Install psycopg2-binary: pip install psycopg2-binary")
             raise
     else:
-        # Use SQLite for local development
         print("💾 Using SQLite database (Local)")
         from database import Database
         return Database()
 
 
-# Create a singleton database instance
+# Singleton database instance
 _db_instance = None
+
 
 def init_database():
     """Initialize database singleton"""

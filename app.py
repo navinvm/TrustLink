@@ -81,8 +81,8 @@ def check_database():
         return False, f"Database error: {str(e)}"
 health_checker.register_check('database', check_database)
 
-# Initialize database with connection pooling
-# Automatically uses PostgreSQL (Railway) or SQLite (local)
+# Initialize database
+# Automatically uses PostgreSQL (Vercel/Railway) or SQLite (local)
 try:
     db = init_database()
     if db:
@@ -94,25 +94,22 @@ except Exception as e:
     print("⚠️ Continuing with limited functionality")
     db = None
 
-# Use connection pool for database (only for SQLite, not PostgreSQL)
-DATABASE_PATH = os.environ.get('DATABASE_PATH', 'trustlink.db')
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
-if not DATABASE_URL:  # Only use pool for SQLite
+# Connection pool only used for local SQLite
+db_pool = None
+from unified_database import get_database_url
+if not get_database_url():
     try:
+        DATABASE_PATH = os.environ.get('DATABASE_PATH', 'trustlink.db')
         db_pool = pool_manager.get_pool(DATABASE_PATH, pool_size=10, max_overflow=20)
-        
-        # Register pool health check
         def check_db_pool():
             return db_pool.healthcheck()
         health_checker.register_check('database_pool', check_db_pool)
-        print("✓ Database connection pool initialized")
+        print("✓ SQLite connection pool initialized")
     except Exception as e:
         print(f"⚠️ Database pool initialization failed: {e}")
         db_pool = None
 else:
     print("✓ Using PostgreSQL - connection pooling handled by database layer")
-    db_pool = None
 
 # Load the pre-trained model and vectorizer
 # For serverless deployments, create models directory if it doesn't exist
@@ -467,37 +464,6 @@ def save_model_metrics(accuracy, precision, recall, training_samples):
     except Exception as e:
         print(f"✗ Error saving model metrics: {e}")
         return False
-
-
-# ========== Temporary Admin Fix Route ==========
-
-@app.route('/fix-admin-account')
-def fix_admin_account():
-    """One-time route to fix admin account - only works if FIX_ADMIN env var is set"""
-    fix_key = os.environ.get('FIX_ADMIN')
-    if not fix_key:
-        return jsonify({'error': 'Not authorized'}), 403
-
-    key_provided = request.args.get('key')
-    if key_provided != fix_key:
-        return jsonify({'error': 'Invalid key'}), 403
-
-    try:
-        admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
-        with db.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                UPDATE users
-                SET email_verified = TRUE, is_admin = TRUE, is_active = TRUE
-                WHERE username = %s
-            ''', (admin_username,))
-            affected = cursor.rowcount
-        if affected:
-            return jsonify({'success': True, 'message': f'Admin account "{admin_username}" fixed! You can now log in.'})
-        else:
-            return jsonify({'error': f'No user found with username "{admin_username}"'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 
 # ========== Public Routes ==========
